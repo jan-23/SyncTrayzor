@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Optional Windows Explorer integration: choose which subfolders are kept on this device (removing them here safely, while other devices keep them), pause or resume folders from the context menu, and overlay icons showing whether items are up to date, syncing, not synced here or failed to sync. Removing subfolders needs a Syncthing release newer than v2.1.7, which doesn't exist yet
+
 ## [2.2.0] - 2026-07-18
 
 ### Added
