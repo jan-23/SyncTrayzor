@@ -8,6 +8,7 @@
 #define AppPublisher "SyncTrayzor"
 #define AppURL "https://github.com/GermanCoding/SyncTrayzor"
 #define AppDataFolder "SyncTrayzor"
+#define ShellExtensionDll "SyncTrayzor.ShellExtension.dll"
 #define V1AppData   "{userappdata}\SyncTrayzor"
 #define LegacyX86AppId "{c9bab27b-d754-4b62-ad8c-3509e1cac15c}"
 #define BackupStamp "_v1_backup"
@@ -57,12 +58,25 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+; Overlay icons can only be registered for the whole machine. The context menu is registered per user by SyncTrayzor itself
+; (Settings > Windows Explorer), which also turns on the status shown by these icons.
+Name: "explorericons"; Description: "Show sync status icons in Windows Explorer (also needs ""Windows Explorer"" enabled in SyncTrayzor's settings)"; GroupDescription: "Windows Explorer:"; Flags: unchecked; Check: IsAdminInstallMode
 
 [Dirs]
 Name: "{userappdata}\{#AppDataFolder}"
 
 [Files]
-Source: "{#AppBin}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+Source: "{#AppBin}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs; Excludes: "{#ShellExtensionDll}"
+; Explorer keeps the shell extension loaded, so it can't be deleted on uninstall until the next reboot. It's registered
+; for the overlay icons in ssPostInstall (with the native regsvr32), not with the regserver flag.
+Source: "{#AppBin}\{#ShellExtensionDll}"; DestDir: "{app}"; Flags: ignoreversion uninsrestartdelete skipifsourcedoesntexist
+
+[Registry]
+; Remove the context menu registered by SyncTrayzor for the current user (see ContextMenuRegistrar.cs)
+Root: HKCU; Subkey: "Software\Classes\CLSID\{{C928D838-7BCF-4D1F-AF8A-192E2AF76B61}"; Flags: uninsdeletekey dontcreatekey
+Root: HKCU; Subkey: "Software\Classes\AllFilesystemObjects\shellex\ContextMenuHandlers\SyncTrayzor"; Flags: uninsdeletekey dontcreatekey
+Root: HKCU; Subkey: "Software\Classes\Directory\Background\shellex\ContextMenuHandlers\SyncTrayzor"; Flags: uninsdeletekey dontcreatekey
+Root: HKCU; Subkey: "Software\Classes\Drive\shellex\ContextMenuHandlers\SyncTrayzor"; Flags: uninsdeletekey dontcreatekey
 
 [Icons]
 Name: "{group}\{#AppName}"; Filename: "{app}\{#AppExeName}"
@@ -161,12 +175,34 @@ begin
   SaveStringToFile(ExpandConstant('{app}\InstallCount.txt'), IntToStr(InstallCount), False);
 end;
 
+{ Deletes renamed copies of the shell extension. Those Explorer still has loaded can't be deleted: if ScheduleRest,
+  they're deleted on the next restart instead }
+procedure DeleteOldShellExtensions(ScheduleRest: Boolean);
+var
+  FindRec: TFindRec;
+  FilePath: String;
+begin
+  if FindFirst(ExpandConstant('{app}\{#ShellExtensionDll}*.old'), FindRec) then
+  begin
+    try
+      repeat
+        FilePath := ExpandConstant('{app}\') + FindRec.Name;
+        if not DeleteFile(FilePath) and ScheduleRest then
+          RestartReplace(FilePath, '');
+      until not FindNext(FindRec);
+    finally
+      FindClose(FindRec);
+    end;
+  end;
+end;
+
 procedure CurStepChanged(CurStep: TSetupStep);
 var
   FindRec: TFindRec;
   FolderPath: String;
   FilePath: String;
   ExeConfig: String;
+  ResultCode: Integer;
 begin
   if CurStep = ssInstall then
   begin
@@ -175,6 +211,12 @@ begin
     { We might be being run from ProcessRunner.exe, *and* we might be trying to update it. Funsies. Let's rename it (which Windows lets us do) }
     DeleteFile(ExpandConstant('{app}\ProcessRunner.exe.old'));
     RenameFile(ExpandConstant('{app}\ProcessRunner.exe'), ExpandConstant('{app}\ProcessRunner.exe.old'));
+
+    { Same for the shell extension, which Explorer keeps loaded. Earlier copies may still be loaded too (if Explorer
+      wasn't restarted since), so give each one a unique name, and delete those which aren't in use any more }
+    DeleteOldShellExtensions(False);
+    RenameFile(ExpandConstant('{app}\{#ShellExtensionDll}'),
+      ExpandConstant('{app}\{#ShellExtensionDll}.') + GetDateTimeString('yyyymmddhhnnsszzz', #0, #0) + '.old');
 
     Log(ExpandConstant('Looking for resource files in {app}\*'));
     { Remove resource files. This means that out-of-date languages will be removed, which (as a last-ditch resore) will alert maintainers that something's wrong }
@@ -203,6 +245,16 @@ begin
   begin
     if OldVersionDetected then
       RestoreAutostartRegistry();
+    // Register the overlay icons with the native regsvr32 (the sys constant is the native System32 in 64-bit
+    // install mode, also on arm64), or unregister them if a previous install registered them but they aren't
+    // wanted any more
+    if IsAdminInstallMode and FileExists(ExpandConstant('{app}\{#ShellExtensionDll}')) then
+    begin
+      if WizardIsTaskSelected('explorericons') then
+        Exec(ExpandConstant('{sys}\regsvr32.exe'), ExpandConstant('/s "{app}\{#ShellExtensionDll}"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
+      else if RegKeyExists(HKLM, 'Software\Microsoft\Windows\CurrentVersion\Explorer\ShellIconOverlayIdentifiers\SyncTrayzor1Error') then
+        Exec(ExpandConstant('{sys}\regsvr32.exe'), ExpandConstant('/s /u "{app}\{#ShellExtensionDll}"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    end;
     ExeConfig := ExpandConstant('{param:SyncTrayzorExeConfig}');
     if ExeConfig <> '' then
     begin
@@ -287,6 +339,7 @@ begin
    end;
   if CurUninstallStep = usPostUninstall then
   begin
+    DeleteOldShellExtensions(True);
     if RegGetValueNames(HKEY_CURRENT_USER, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Run', keyValueNames) then
     begin
       for i := 0 to GetArrayLength(keyValueNames)-1 do
@@ -488,6 +541,8 @@ begin
 end;
 
 [UninstallRun]
+; Unregisters the overlay icons, if they were registered (before the files are deleted)
+Filename: "{sys}\regsvr32.exe"; Parameters: "/s /u ""{app}\{#ShellExtensionDll}"""; RunOnceId: "UnregisterShellExtension"; Flags: runhidden skipifdoesntexist
 Filename: "{app}\SyncTrayzor.exe"; Parameters: "--shutdown"; RunOnceId: "ShutdownSyncTrayzor"; Flags: skipifdoesntexist
 
 [UninstallDelete]
