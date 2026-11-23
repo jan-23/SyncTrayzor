@@ -25,6 +25,7 @@ using SyncTrayzor.Services.Metering;
 using System.Reflection;
 using SyncTrayzor.Localization;
 using SyncTrayzor.Services.Ipc;
+using SyncTrayzor.Services.ExplorerIntegration;
 using System.Net;
 using System.Runtime.Versioning;
 using System.Windows.Media;
@@ -79,6 +80,14 @@ namespace SyncTrayzor
             builder.Bind<IConnectedEventDebouncer>().To<ConnectedEventDebouncer>();
             builder.Bind<IDonationManager>().To<DonationManager>().InSingletonScope();
             builder.Bind<IInstallationHealthCheck>().To<InstallationHealthCheck>().InSingletonScope();
+            builder.Bind<IShellChangeNotifier>().To<ShellChangeNotifier>().InSingletonScope();
+            builder.Bind<IExplorerStatusService>().To<ExplorerStatusService>().InSingletonScope();
+            builder.Bind<IExplorerCommandHandler>().To<ExplorerCommandHandler>().InSingletonScope();
+            builder.Bind<ISelectiveSyncService>().To<SelectiveSyncService>().InSingletonScope();
+            builder.Bind<IRecycleBin>().To<RecycleBin>().InSingletonScope();
+            builder.Bind<IRemovalJournal>().To<RemovalJournal>().InSingletonScope();
+            builder.Bind<IContextMenuRegistrar>().To<ContextMenuRegistrar>().InSingletonScope();
+            builder.Bind<IExplorerIntegrationManager>().To<ExplorerIntegrationManager>().InSingletonScope();
 
             if (AppSettings.Instance.Variant == SyncTrayzorVariant.Installed)
                 builder.Bind<IUpdateVariantHandler>().To<InstalledUpdateVariantHandler>();

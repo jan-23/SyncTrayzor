@@ -1022,4 +1022,208 @@ Please donate to the syncthing project.</value>
     <value>Conflicting SyncTrayzor processes detected</value>
     <comment>Title of the window when the ViewerView_CefCacheLocked message is displayed</comment>
   </data>
+  <data name="ExplorerIntegration_ActionFailed_Title" xml:space="preserve">
+    <value>Explorer action failed</value>
+    <comment>Title of the balloon shown when an action from the Explorer context menu fails</comment>
+  </data>
+  <data name="ExplorerIntegration_ActionFailed_Message" xml:space="preserve">
+    <value>Syncthing couldn't carry out the action: {0}</value>
+    <comment>{0} is the error message</comment>
+  </data>
+  <data name="ExplorerMenu_PauseFolder" xml:space="preserve">
+    <value>Pause syncing this folder</value>
+    <comment>Explorer context menu item, shown on a Syncthing folder</comment>
+  </data>
+  <data name="ExplorerMenu_ResumeFolder" xml:space="preserve">
+    <value>Resume syncing this folder</value>
+    <comment>Explorer context menu item, shown on a paused Syncthing folder</comment>
+  </data>
+  <data name="ExplorerMenu_Rescan" xml:space="preserve">
+    <value>Rescan</value>
+    <comment>Explorer context menu item, asks Syncthing to rescan the selected files</comment>
+  </data>
+  <data name="ExplorerMenu_Open" xml:space="preserve">
+    <value>Open SyncTrayzor</value>
+    <comment>Explorer context menu item</comment>
+  </data>
+  <data name="SettingsView_Section_ExplorerIntegration" xml:space="preserve">
+    <value>Windows Explorer</value>
+  </data>
+  <data name="SettingsView_EnableExplorerIntegration" xml:space="preserve">
+    <value>Show sync status and Syncthing actions in Windows Explorer</value>
+  </data>
+  <data name="SettingsView_ExplorerIntegration_Description" xml:space="preserve">
+    <value>Adds a SyncTrayzor submenu to the files and folders in your Syncthing folders, for example to choose which subfolders are kept on this device, or to pause a folder. Sync status icons also need the "Explorer status icons" option of the installer. Windows can only show a limited number of icon kinds across all programs, so other sync tools may hide them.</value>
+  </data>
+  <data name="ExplorerMenu_RemoveFromDevice" xml:space="preserve">
+    <value>Remove from this device</value>
+    <comment>Explorer context menu item on a subfolder: stops syncing it to this device and deletes the local copy (other devices keep it)</comment>
+  </data>
+  <data name="ExplorerMenu_DownloadToDevice" xml:space="preserve">
+    <value>Download to this device</value>
+    <comment>Explorer context menu item on a subfolder previously removed from this device</comment>
+  </data>
+  <data name="ExplorerMenu_ChooseSubfolders" xml:space="preserve">
+    <value>Choose subfolders…</value>
+    <comment>Explorer context menu item: opens a window to choose which subfolders are synced to this device</comment>
+  </data>
+  <data name="SelectiveSync_Removed_Title" xml:space="preserve">
+    <value>Removed from this device</value>
+  </data>
+  <data name="SelectiveSync_Removed_Message" xml:space="preserve">
+    <value>Moved to the Recycle Bin, and kept on your other devices: {0}</value>
+    <comment>{0} is a list of folder names</comment>
+  </data>
+  <data name="SelectiveSync_Downloading_Title" xml:space="preserve">
+    <value>Downloading to this device</value>
+  </data>
+  <data name="SelectiveSync_Downloading_Message" xml:space="preserve">
+    <value>Syncthing is downloading {0}.</value>
+    <comment>{0} is a list of folder names</comment>
+  </data>
+  <data name="SelectiveSync_Error_IsRoot" xml:space="preserve">
+    <value>"{0}" is a Syncthing folder. To stop syncing it, pause it or remove it in Syncthing.</value>
+    <comment>{0} is the folder name</comment>
+  </data>
+  <data name="SelectiveSync_Error_NotADirectory" xml:space="preserve">
+    <value>"{0}" isn't a folder on this device.</value>
+    <comment>{0} is the folder name</comment>
+  </data>
+  <data name="SelectiveSync_Error_FolderPaused" xml:space="preserve">
+    <value>"{0}" can't be removed while its Syncthing folder is paused.</value>
+    <comment>{0} is the folder name</comment>
+  </data>
+  <data name="SelectiveSync_Error_NotConfirmed" xml:space="preserve">
+    <value>"{0}" wasn't removed: Syncthing didn't confirm in time that it's no longer synced. It's synced to this device again; please try again later.</value>
+    <comment>{0} is the folder name</comment>
+  </data>
+  <data name="SelectiveSync_Error_ExceptionInside" xml:space="preserve">
+    <value>"{0}" wasn't removed: "{1}" in it would still be synced, because of an exception ("!") in the folder's ignore patterns. It's synced to this device again.</value>
+    <comment>{0} is the folder name, {1} a file in it</comment>
+  </data>
+  <data name="SelectiveSyncView_Title" xml:space="preserve">
+    <value>Choose subfolders</value>
+  </data>
+  <data name="SelectiveSyncView_Description" xml:space="preserve">
+    <value>Checked subfolders are synced to this device. Unchecked ones are removed from this device (moved to the Recycle Bin, leaving an empty folder), but stay on your other devices.</value>
+  </data>
+  <data name="SelectiveSyncView_Apply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="SelectiveSyncView_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="SelectiveSyncView_Loading" xml:space="preserve">
+    <value>Loading…</value>
+  </data>
+  <data name="SelectiveSyncView_NoSubfolders" xml:space="preserve">
+    <value>This folder has no subfolders.</value>
+  </data>
+  <data name="SelectiveSyncView_Status_NotOnThisDevice" xml:space="preserve">
+    <value>Not on this device</value>
+  </data>
+  <data name="SelectiveSyncView_Status_Downloading" xml:space="preserve">
+    <value>Downloading…</value>
+  </data>
+  <data name="SelectiveSyncView_Status_Removing" xml:space="preserve">
+    <value>Checking and removing…</value>
+  </data>
+  <data name="SelectiveSyncView_Status_Removed" xml:space="preserve">
+    <value>Removed from this device</value>
+  </data>
+  <data name="SelectiveSync_Error_NotShared" xml:space="preserve">
+    <value>"{0}" wasn't removed: its Syncthing folder isn't shared with any other device.</value>
+    <comment>{0} is the folder name</comment>
+  </data>
+  <data name="SelectiveSync_Error_NoValidCopy" xml:space="preserve">
+    <value>"{0}" wasn't removed: no other device has an up-to-date copy of "{1}" in it, or that device isn't connected right now.</value>
+    <comment>{0} is the folder name, {1} a file in it</comment>
+  </data>
+  <data name="SelectiveSync_Error_Unsupported" xml:space="preserve">
+    <value>"{0}" wasn't removed: this version of Syncthing can't tell reliably whether other devices have a copy of it. Please update Syncthing.</value>
+    <comment>{0} is the folder name</comment>
+  </data>
+  <data name="SelectiveSyncView_RemovalUnsupported" xml:space="preserve">
+    <value>Removing subfolders from this device needs a newer version of Syncthing, which can tell reliably whether other devices have a copy of them. You can still download subfolders.</value>
+  </data>
+  <data name="SelectiveSync_Error_CheckFailed" xml:space="preserve">
+    <value>"{0}" wasn't removed: checking it failed ({1}).</value>
+    <comment>{0} is the folder name, {1} an error message</comment>
+  </data>
+  <data name="SelectiveSync_Error_AlreadyRemoved" xml:space="preserve">
+    <value>"{0}" isn't synced to this device anyway.</value>
+    <comment>{0} is the folder name</comment>
+  </data>
+  <data name="SelectiveSync_Error_NoRecycleBin" xml:space="preserve">
+    <value>"{0}" wasn't removed: its drive has no Recycle Bin, so its files would be deleted permanently.</value>
+    <comment>{0} is the folder name</comment>
+  </data>
+  <data name="SelectiveSync_Error_NestedFolder" xml:space="preserve">
+    <value>"{0}" wasn't removed: it contains another Syncthing folder ({1}), which would sync the deletion to its other devices.</value>
+    <comment>{0} is the folder name, {1} the path of the other folder</comment>
+  </data>
+  <data name="SelectiveSync_Error_ScanFailed" xml:space="preserve">
+    <value>"{0}" wasn't removed: Syncthing couldn't finish scanning it. Please try again in a moment.</value>
+    <comment>{0} is the folder name</comment>
+  </data>
+  <data name="SelectiveSync_Error_Link" xml:space="preserve">
+    <value>"{0}" wasn't removed: "{1}" in it is a link or junction, which can't be removed safely.</value>
+    <comment>{0} is the folder name, {1} a path in it</comment>
+  </data>
+  <data name="SelectiveSync_Error_IgnoredInside" xml:space="preserve">
+    <value>"{0}" wasn't removed: "{1}" in it is excluded by the folder's ignore patterns, so this device has the only copy of it.</value>
+    <comment>{0} is the folder name, {1} a file in it</comment>
+  </data>
+  <data name="SelectiveSync_Error_NotScanned" xml:space="preserve">
+    <value>"{0}" wasn't removed: "{1}" in it changed since Syncthing last scanned it. Please try again in a moment.</value>
+    <comment>{0} is the folder name, {1} a file in it</comment>
+  </data>
+  <data name="SelectiveSync_Error_LocalChanges" xml:space="preserve">
+    <value>"{0}" wasn't removed: "{1}" in it has changes on this device which aren't synced to other devices.</value>
+    <comment>{0} is the folder name, {1} a file in it</comment>
+  </data>
+  <data name="SelectiveSync_Error_ChangedMeanwhile" xml:space="preserve">
+    <value>"{0}" wasn't removed, as "{1}" in it changed meanwhile. It's synced to this device again, and nothing was lost.</value>
+    <comment>{0} is the folder name, {1} a file in it</comment>
+  </data>
+  <data name="SelectiveSync_Error_RecycleFailed" xml:space="preserve">
+    <value>"{0}" wasn't removed, as "{1}" in it couldn't be moved to the Recycle Bin. It's synced to this device again: files already moved to the Recycle Bin are downloaded again.</value>
+    <comment>{0} is the folder name, {1} a file in it</comment>
+  </data>
+  <data name="SelectiveSync_ConfirmRemove_Title" xml:space="preserve">
+    <value>Remove from this device</value>
+  </data>
+  <data name="SelectiveSync_ConfirmRemove_Message" xml:space="preserve">
+    <value>Remove {0} from this device?
+
+SyncTrayzor first checks that your other devices have every file. Then the files here are moved to the Recycle Bin. They stay on your other devices, and you can download them again at any time.</value>
+    <comment>{0} is a list of folder names</comment>
+  </data>
+  <data name="SelectiveSync_Removing_Title" xml:space="preserve">
+    <value>Removing from this device</value>
+  </data>
+  <data name="SelectiveSync_Removing_Message" xml:space="preserve">
+    <value>Checking that your other devices have every file in {0}…</value>
+    <comment>{0} is a list of folder names</comment>
+  </data>
+  <data name="SelectiveSync_Error_InsideOtherFolder" xml:space="preserve">
+    <value>"{0}" wasn't removed: it's also inside another Syncthing folder ({1}), which would sync the deletion to its other devices.</value>
+    <comment>{0} is the folder name, {1} the path of the other folder</comment>
+  </data>
+  <data name="SelectiveSync_Error_IncludeFile" xml:space="preserve">
+    <value>"{0}" wasn't removed: "{1}" in it is used by the folder's ignore patterns (#include), and Syncthing would stop syncing the folder without it.</value>
+    <comment>{0} is the folder name, {1} a file in it</comment>
+  </data>
+  <data name="SelectiveSync_Error_PathTooLong" xml:space="preserve">
+    <value>"{0}" wasn't removed: the path of "{1}" in it is too long for the Recycle Bin.</value>
+    <comment>{0} is the folder name, {1} a path in it</comment>
+  </data>
+  <data name="SelectiveSync_Error_NoLongerAvailable" xml:space="preserve">
+    <value>"{0}" wasn't removed: meanwhile, no other device has an up-to-date copy of "{1}" in it any more (was it removed there too?). It's synced to this device again, and nothing was lost.</value>
+    <comment>{0} is the folder name, {1} a file in it</comment>
+  </data>
+  <data name="SelectiveSync_Error_Incomplete" xml:space="preserve">
+    <value>Removing "{0}" didn't finish, and it isn't synced to this device at the moment. Use "Download to this device" to sync it again.</value>
+    <comment>{0} is the folder name</comment>
+  </data>
 </root>

@@ -61,5 +61,18 @@ namespace SyncTrayzor.Tests
             Assert.False(caps.SupportsDebugFacilities);
             Assert.False(caps.SupportsDevicePauseResume);
         }
+
+        // ── SupportsReliableAvailability ─────────────────────────────────────
+
+        [Theory]
+        [InlineData(2, 0, 3, false)]
+        [InlineData(2, 1, 7, false)]
+        [InlineData(2, 1, 8, true)]
+        [InlineData(2, 2, 0, true)]
+        public void SupportsReliableAvailability(int major, int minor, int build, bool expected)
+        {
+            var caps = new SyncthingCapabilities { SyncthingVersion = new Version(major, minor, build) };
+            Assert.Equal(expected, caps.SupportsReliableAvailability);
+        }
     }
 }
