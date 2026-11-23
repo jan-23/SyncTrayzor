@@ -51,5 +51,23 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         [Post("/rest/system/resume")]
         Task ResumeDeviceAsync(string device);
+
+        [Patch("/rest/config/folders/{id}")]
+        Task PatchFolderAsync([Path] string id, [Body] object patch);
+
+        [Get("/rest/db/ignores")]
+        Task<Ignores> FetchIgnoresAsync(string folder, CancellationToken cancellationToken);
+
+        [Post("/rest/db/ignores")]
+        Task<Ignores> SetIgnoresAsync(string folder, [Body] Ignores ignores, CancellationToken cancellationToken);
+
+        [Get("/rest/db/file")]
+        Task<DbFile> FetchFileAsync(string folder, string file, CancellationToken cancellationToken);
+
+        [Get("/rest/db/browse")]
+        Task<List<TreeEntry>> BrowseAsync(string folder, string prefix, int levels, string dirsonly, CancellationToken cancellationToken);
+
+        [Get("/rest/db/need")]
+        Task<FolderNeed> FetchNeedAsync(string folder, int page, int perpage, CancellationToken cancellationToken);
     }
 }

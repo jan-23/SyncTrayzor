@@ -157,7 +157,10 @@ namespace SyncTrayzor.Syncthing.Folders
                     if (path.StartsWith("~"))
                         path = Path.Combine(tilde, path.Substring(1).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
 
-                    return new Folder(folder.ID, folder.Label, path, folder.IsFsWatcherEnabled, syncState, status);
+                    var deviceIds = (folder.Devices ?? []).Select(x => x.DeviceId).ToList();
+                    var untrustedDeviceIds = (folder.Devices ?? []).Where(x => x.IsUntrusted).Select(x => x.DeviceId).ToList();
+                    return new Folder(folder.ID, folder.Label, path, folder.IsFsWatcherEnabled, syncState, status, folder.IsPaused,
+                        deviceIds, folder.FolderType, untrustedDeviceIds, TimeSpan.FromSeconds(folder.ModTimeWindowSeconds));
                 });
 
             cancellationToken.ThrowIfCancellationRequested();

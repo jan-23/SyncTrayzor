@@ -20,5 +20,11 @@ namespace SyncTrayzor.Syncthing.ApiClient
         Task SetDebugFacilitiesAsync(IEnumerable<string> enable, IEnumerable<string> disable);
         Task PauseDeviceAsync(string deviceId);
         Task ResumeDeviceAsync(string deviceId);
+        Task SetFolderPausedAsync(string folderId, bool paused);
+        Task<Ignores> FetchIgnoresAsync(string folderId, CancellationToken cancellationToken);
+        Task SetIgnoresAsync(string folderId, IEnumerable<string> lines, CancellationToken cancellationToken);
+        Task<DbFile> FetchFileAsync(string folderId, string file, CancellationToken cancellationToken);
+        Task<List<TreeEntry>> BrowseDirectoriesAsync(string folderId, string prefix, CancellationToken cancellationToken);
+        Task<FolderNeed> FetchNeedAsync(string folderId, int page, int perPage, CancellationToken cancellationToken);
     }
 }

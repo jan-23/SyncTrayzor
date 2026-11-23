@@ -10,6 +10,12 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("deviceId")]
         public string DeviceId { get; set; }
 
+        /// <summary>Set if the device is untrusted: it only gets an encrypted copy. Never log this.</summary>
+        [JsonProperty("encryptionPassword")]
+        public string EncryptionPassword { get; set; }
+
+        public bool IsUntrusted => !String.IsNullOrEmpty(EncryptionPassword);
+
         public bool Equals(ConfigFolderDevice other)
         {
             return other != null && DeviceId == other.DeviceId;
@@ -35,9 +41,9 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("devices")]
         public List<ConfigFolderDevice> Devices { get; set; }
 
-        // This has changed type, and we don't use it anyway
-        //[JsonProperty("type")]
-        //public bool Type { get; set; }
+        /// <summary>"sendreceive", "sendonly", "receiveonly" or "receiveencrypted"</summary>
+        [JsonProperty("type")]
+        public string FolderType { get; set; }
 
         [JsonProperty("rescanIntervalS")]
         public long RescanIntervalSeconds { get; set; }
@@ -54,6 +60,13 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("fsWatcherEnabled")]
         public bool IsFsWatcherEnabled { get; set; }
 
+        [JsonProperty("paused")]
+        public bool IsPaused { get; set; }
+
+        /// <summary>Modification times within this many seconds count as equal</summary>
+        [JsonProperty("modTimeWindowS")]
+        public int ModTimeWindowSeconds { get; set; }
+
         public bool Equals(ConfigFolder other)
         {
             return other != null &&
@@ -63,13 +76,14 @@ namespace SyncTrayzor.Syncthing.ApiClient
                 //this.Type == other.Type &&
                 RescanIntervalSeconds == other.RescanIntervalSeconds &&
                 Invalid == other.Invalid &&
-                IsFsWatcherEnabled == other.IsFsWatcherEnabled;
+                IsFsWatcherEnabled == other.IsFsWatcherEnabled &&
+                IsPaused == other.IsPaused;
         }
 
         public override string ToString()
         {
             return $"<Folder id={ID} label={Label} path={Path} devices=[{String.Join(", ", Devices)}] rescalinterval={RescanInterval} " +
-                $"invalid={Invalid} fsWatcherEnabled={IsFsWatcherEnabled}>";
+                $"invalid={Invalid} fsWatcherEnabled={IsFsWatcherEnabled} paused={IsPaused}>";
         }
     }
 
