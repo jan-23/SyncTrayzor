@@ -1,0 +1,40 @@
+#include "resource.h"
+#include <winres.h>
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+// Keep in the order of their IDs, see resource.h
+IDI_OVERLAY_UPTODATE ICON "Icons\\overlay_uptodate.ico"
+IDI_OVERLAY_SYNCING  ICON "Icons\\overlay_syncing.ico"
+IDI_OVERLAY_IGNORED  ICON "Icons\\overlay_ignored.ico"
+IDI_OVERLAY_ERROR    ICON "Icons\\overlay_error.ico"
+IDI_SYNCTRAYZOR      ICON "..\\SyncTrayzor\\Icons\\default.ico"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,0
+ PRODUCTVERSION VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,0
+ FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+ FILEFLAGS 0x0L
+ FILEOS VOS_NT_WINDOWS32
+ FILETYPE VFT_DLL
+ FILESUBTYPE VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "CompanyName", "SyncTrayzor"
+            VALUE "FileDescription", "SyncTrayzor Explorer integration"
+            VALUE "FileVersion", VERSION_STRING
+            VALUE "InternalName", "SyncTrayzor.ShellExtension"
+            VALUE "LegalCopyright", "MIT License"
+            VALUE "OriginalFilename", "SyncTrayzor.ShellExtension.dll"
+            VALUE "ProductName", "SyncTrayzor"
+            VALUE "ProductVersion", VERSION_STRING
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END

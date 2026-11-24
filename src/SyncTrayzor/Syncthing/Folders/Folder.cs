@@ -15,6 +15,22 @@ namespace SyncTrayzor.Syncthing.Folders
 
         public bool IsFsWatcherEnabled { get; }
 
+        public bool IsPaused { get; }
+
+        /// <summary>IDs of all devices the folder is shared with (including this one)</summary>
+        public IReadOnlyList<string> DeviceIds { get; }
+
+        /// <summary>"sendreceive", "sendonly", "receiveonly" or "receiveencrypted"</summary>
+        public string FolderType { get; }
+
+        public bool IsReceiveEncrypted => FolderType == "receiveencrypted";
+
+        /// <summary>IDs of the devices which only get an encrypted copy of the folder</summary>
+        public IReadOnlyList<string> UntrustedDeviceIds { get; }
+
+        /// <summary>Modification times within this window count as equal (Syncthing's modTimeWindowS)</summary>
+        public TimeSpan ModTimeWindow { get; }
+
         private FolderSyncState _syncState;
         public FolderSyncState SyncState
         {
@@ -38,12 +54,18 @@ namespace SyncTrayzor.Syncthing.Folders
             private set { lock(syncRoot) { _folderErrors = value; } }
         }
 
-        public Folder(string folderId, string label, string path, bool isFsWatcherEnabled, FolderSyncState syncState, FolderStatus status)
+        public Folder(string folderId, string label, string path, bool isFsWatcherEnabled, FolderSyncState syncState, FolderStatus status, bool isPaused = false, IReadOnlyList<string> deviceIds = null, string folderType = null,
+            IReadOnlyList<string> untrustedDeviceIds = null, TimeSpan modTimeWindow = default)
         {
             FolderId = folderId;
             Label = String.IsNullOrWhiteSpace(label) ? folderId : label;
             Path = path;
             IsFsWatcherEnabled = isFsWatcherEnabled;
+            IsPaused = isPaused;
+            DeviceIds = deviceIds ?? [];
+            FolderType = folderType;
+            UntrustedDeviceIds = untrustedDeviceIds ?? [];
+            ModTimeWindow = modTimeWindow;
             SyncState = syncState;
             syncingPaths = new HashSet<string>();
             _status = status;
@@ -101,7 +123,12 @@ namespace SyncTrayzor.Syncthing.Folders
                 return FolderId == other.FolderId &&
                     Label == other.Label &&
                     Path == other.Path &&
-                    IsFsWatcherEnabled == other.IsFsWatcherEnabled && 
+                    IsFsWatcherEnabled == other.IsFsWatcherEnabled &&
+                    IsPaused == other.IsPaused &&
+                    DeviceIds.SequenceEqual(other.DeviceIds) &&
+                    FolderType == other.FolderType &&
+                    UntrustedDeviceIds.SequenceEqual(other.UntrustedDeviceIds) &&
+                    ModTimeWindow == other.ModTimeWindow &&
                     SyncState == other.SyncState &&
                     Status == other.Status &&
                     FolderErrors.SequenceEqual(other.FolderErrors) &&
@@ -119,6 +146,7 @@ namespace SyncTrayzor.Syncthing.Folders
                     hash = hash * 23 + FolderId.GetHashCode();
                     hash = hash * 23 + Label.GetHashCode();
                     hash = hash * 23 + IsFsWatcherEnabled.GetHashCode();
+                    hash = hash * 23 + IsPaused.GetHashCode();
                     hash = hash * 23 + SyncState.GetHashCode();
                     hash = hash * 23 + Status.GetHashCode();
                     hash = hash * 23 + syncingPaths.GetHashCode();

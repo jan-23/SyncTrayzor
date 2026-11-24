@@ -7,6 +7,7 @@ using SyncTrayzor.Syncthing.TransferHistory;
 using SyncTrayzor.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,6 +57,19 @@ namespace SyncTrayzor.Syncthing
         void KillAllSyncthingProcesses();
 
         Task ScanAsync(string folderId, string subPath);
+
+        /// <summary>Like <see cref="ScanAsync"/>, but throws if the scan request fails (e.g. times out)</summary>
+        Task ScanOrThrowAsync(string folderId, string subPath);
+
+        Task SetFolderPausedAsync(string folderId, bool paused);
+        Task<IReadOnlyList<string>> FetchIgnoresAsync(string folderId, CancellationToken cancellationToken);
+        Task SetIgnoresAsync(string folderId, IEnumerable<string> lines, CancellationToken cancellationToken);
+        Task<IReadOnlyList<string>> FetchExpandedIgnoresAsync(string folderId, CancellationToken cancellationToken);
+        Task<DbFile> FetchFileAsync(string folderId, string path, CancellationToken cancellationToken);
+        Task<bool?> IsIgnoredInIndexAsync(string folderId, string path, CancellationToken cancellationToken);
+        Task<IReadOnlyList<TreeEntry>> BrowseDirectoriesAsync(string folderId, string prefix, CancellationToken cancellationToken);
+        string LocalDeviceId { get; }
+        Task<IReadOnlyList<string>> FetchNeededItemsAsync(string folderId, int maxItems, CancellationToken cancellationToken);
     }
 
     public class SyncthingManager : ISyncthingManager
@@ -283,6 +297,89 @@ namespace SyncTrayzor.Syncthing
             {
                 logger.Error(e, "Error scanning folder {folderId} with path {subPath}", folderId, subPath);
             }
+        }
+
+        public Task ScanOrThrowAsync(string folderId, string subPath)
+        {
+            return RequireApiClient().ScanAsync(folderId, subPath);
+        }
+
+        private ISyncthingApiClient RequireApiClient()
+        {
+            var client = apiClient.Value;
+            if (State != SyncthingState.Running || client == null)
+                throw new InvalidOperationException("Syncthing is not running");
+            return client;
+        }
+
+        public Task SetFolderPausedAsync(string folderId, bool paused)
+        {
+            return RequireApiClient().SetFolderPausedAsync(folderId, paused);
+        }
+
+        public async Task<IReadOnlyList<string>> FetchIgnoresAsync(string folderId, CancellationToken cancellationToken)
+        {
+            var ignores = await FetchIgnoresOrThrowAsync(folderId, cancellationToken);
+            return ignores.Lines ?? new List<string>();
+        }
+
+        // If Syncthing couldn't read .stignore, it returns no lines: writing them back would wipe the file
+        private async Task<Ignores> FetchIgnoresOrThrowAsync(string folderId, CancellationToken cancellationToken)
+        {
+            var ignores = await RequireApiClient().FetchIgnoresAsync(folderId, cancellationToken);
+            if (!String.IsNullOrEmpty(ignores.Error))
+                throw new InvalidOperationException($"Syncthing can't read the ignore patterns: {ignores.Error}");
+            return ignores;
+        }
+
+        public Task SetIgnoresAsync(string folderId, IEnumerable<string> lines, CancellationToken cancellationToken)
+        {
+            return RequireApiClient().SetIgnoresAsync(folderId, lines, cancellationToken);
+        }
+
+        public async Task<IReadOnlyList<string>> FetchExpandedIgnoresAsync(string folderId, CancellationToken cancellationToken)
+        {
+            var ignores = await FetchIgnoresOrThrowAsync(folderId, cancellationToken);
+            return ignores.Expanded ?? new List<string>();
+        }
+
+        public async Task<DbFile> FetchFileAsync(string folderId, string path, CancellationToken cancellationToken)
+        {
+            try
+            {
+                return await RequireApiClient().FetchFileAsync(folderId, path, cancellationToken);
+            }
+            catch (ApiException e) when (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                // Not in the index at all
+                return null;
+            }
+        }
+
+        public async Task<bool?> IsIgnoredInIndexAsync(string folderId, string path, CancellationToken cancellationToken)
+        {
+            var file = await FetchFileAsync(folderId, path, cancellationToken);
+            return file?.Local?.Ignored;
+        }
+
+        public async Task<IReadOnlyList<TreeEntry>> BrowseDirectoriesAsync(string folderId, string prefix, CancellationToken cancellationToken)
+        {
+            var entries = await RequireApiClient().BrowseDirectoriesAsync(folderId, prefix, cancellationToken);
+            return entries ?? new List<TreeEntry>();
+        }
+
+        public string LocalDeviceId => systemInfo?.MyID;
+
+        public async Task<IReadOnlyList<string>> FetchNeededItemsAsync(string folderId, int maxItems, CancellationToken cancellationToken)
+        {
+            var need = await RequireApiClient().FetchNeedAsync(folderId, 1, maxItems, cancellationToken);
+            var items = new List<string>();
+            foreach (var list in new[] { need.Progress, need.Queued, need.Rest })
+            {
+                if (list != null)
+                    items.AddRange(list.Select(x => x.Name));
+            }
+            return items;
         }
 
         private void SetState(SyncthingState state)

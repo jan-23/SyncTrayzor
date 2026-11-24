@@ -107,6 +107,20 @@
                             </Grid>
                         </GroupBox>
 
+                        <GroupBox DockPanel.Dock="Top" Header="{l:Loc SettingsView_Section_ExplorerIntegration}">
+                            <DockPanel>
+                                <CheckBox DockPanel.Dock="Top" IsChecked="{Binding EnableExplorerIntegration.Value}"
+                                            Content="{l:Loc SettingsView_EnableExplorerIntegration}"/>
+                                <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Margin="0,5,0,0"
+                                            Text="{l:Loc SettingsView_ExplorerIntegration_Description}"
+                                            Width="{Binding Parent.ActualWidth, RelativeSource={RelativeSource Self}}"/>
+                                <CheckBox DockPanel.Dock="Top" Margin="0,5,0,0" IsChecked="{Binding ExplorerIntegrationSkipSyncthingVersionCheck.Value}"
+                                            IsEnabled="{Binding EnableExplorerIntegration.Value}"
+                                            Content="{l:Loc SettingsView_ExplorerIntegration_SkipVersionCheck}"
+                                            ToolTip="{l:Loc SettingsView_ExplorerIntegration_SkipVersionCheck_ToolTip}"/>
+                            </DockPanel>
+                        </GroupBox>
+
                         <GroupBox DockPanel.Dock="Top" Header="{l:Loc SettingsView_Section_StartOnLogin}">
                             <DockPanel>
                                 <Grid DockPanel.Dock="Top">

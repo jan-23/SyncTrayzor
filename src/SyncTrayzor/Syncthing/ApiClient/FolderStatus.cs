@@ -35,6 +35,9 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("needFiles")]
         public int NeedFiles { get; set; }
 
+        [JsonProperty("needTotalItems")]
+        public int NeedTotalItems { get; set; }
+
         [JsonProperty("invalid")]
         public string Invalid { get; set; }
 

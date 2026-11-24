@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <None Include="..\SyncTrayzor\Properties\Resources*.resx" Link="Resources\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="TestData\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

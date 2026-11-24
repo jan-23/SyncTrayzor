@@ -121,5 +121,37 @@ namespace SyncTrayzor.Syncthing.ApiClient
             logger.Debug("Resuming device {0}", deviceId);
             return api.ResumeDeviceAsync(deviceId);
         }
+
+        public Task SetFolderPausedAsync(string folderId, bool paused)
+        {
+            logger.Debug("Setting folder {0} paused: {1}", folderId, paused);
+            return api.PatchFolderAsync(folderId, new { paused });
+        }
+
+        public Task<Ignores> FetchIgnoresAsync(string folderId, CancellationToken cancellationToken)
+        {
+            return api.FetchIgnoresAsync(folderId, cancellationToken);
+        }
+
+        public Task SetIgnoresAsync(string folderId, IEnumerable<string> lines, CancellationToken cancellationToken)
+        {
+            logger.Debug("Setting ignore patterns for folder {0}", folderId);
+            return api.SetIgnoresAsync(folderId, new Ignores() { Lines = new List<string>(lines) }, cancellationToken);
+        }
+
+        public Task<DbFile> FetchFileAsync(string folderId, string file, CancellationToken cancellationToken)
+        {
+            return api.FetchFileAsync(folderId, file, cancellationToken);
+        }
+
+        public Task<List<TreeEntry>> BrowseDirectoriesAsync(string folderId, string prefix, CancellationToken cancellationToken)
+        {
+            // levels=0: only the direct children of prefix
+            return api.BrowseAsync(folderId, prefix, 0, "true", cancellationToken);
+        }
+        public Task<FolderNeed> FetchNeedAsync(string folderId, int page, int perPage, CancellationToken cancellationToken)
+        {
+            return api.FetchNeedAsync(folderId, page, perPage, cancellationToken);
+        }
     }
 }

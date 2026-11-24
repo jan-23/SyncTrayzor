@@ -612,6 +612,87 @@ namespace SyncTrayzor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Syncthing couldn't carry out the action: {0}.
+        /// </summary>
+        public static string ExplorerIntegration_ActionFailed_Message {
+            get {
+                return ResourceManager.GetString("ExplorerIntegration_ActionFailed_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Explorer action failed.
+        /// </summary>
+        public static string ExplorerIntegration_ActionFailed_Title {
+            get {
+                return ResourceManager.GetString("ExplorerIntegration_ActionFailed_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose subfolders….
+        /// </summary>
+        public static string ExplorerMenu_ChooseSubfolders {
+            get {
+                return ResourceManager.GetString("ExplorerMenu_ChooseSubfolders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download to this device.
+        /// </summary>
+        public static string ExplorerMenu_DownloadToDevice {
+            get {
+                return ResourceManager.GetString("ExplorerMenu_DownloadToDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open SyncTrayzor.
+        /// </summary>
+        public static string ExplorerMenu_Open {
+            get {
+                return ResourceManager.GetString("ExplorerMenu_Open", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pause syncing this folder.
+        /// </summary>
+        public static string ExplorerMenu_PauseFolder {
+            get {
+                return ResourceManager.GetString("ExplorerMenu_PauseFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove from this device.
+        /// </summary>
+        public static string ExplorerMenu_RemoveFromDevice {
+            get {
+                return ResourceManager.GetString("ExplorerMenu_RemoveFromDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rescan.
+        /// </summary>
+        public static string ExplorerMenu_Rescan {
+            get {
+                return ResourceManager.GetString("ExplorerMenu_Rescan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resume syncing this folder.
+        /// </summary>
+        public static string ExplorerMenu_ResumeFolder {
+            get {
+                return ResourceManager.GetString("ExplorerMenu_ResumeFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Downloading.
         /// </summary>
         public static string FileTranfersTrayView_Header_Downloading {
@@ -883,6 +964,395 @@ namespace SyncTrayzor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove {0} from this device?
+        ///
+        ///SyncTrayzor first checks that your other devices have every file. Then the files here are moved to the Recycle Bin. They stay on your other devices, and you can download them again at any time.
+        /// </summary>
+        public static string SelectiveSync_ConfirmRemove_Message {
+            get {
+                return ResourceManager.GetString("SelectiveSync_ConfirmRemove_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove from this device.
+        /// </summary>
+        public static string SelectiveSync_ConfirmRemove_Title {
+            get {
+                return ResourceManager.GetString("SelectiveSync_ConfirmRemove_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Syncthing is downloading {0}.
+        /// </summary>
+        public static string SelectiveSync_Downloading_Message {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Downloading_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading to this device.
+        /// </summary>
+        public static string SelectiveSync_Downloading_Title {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Downloading_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" isn't synced to this device anyway.
+        /// </summary>
+        public static string SelectiveSync_Error_AlreadyRemoved {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_AlreadyRemoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed, as "{1}" in it changed meanwhile. It's synced to this device again, and nothing was lost.
+        /// </summary>
+        public static string SelectiveSync_Error_ChangedMeanwhile {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_ChangedMeanwhile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: checking it failed ({1}).
+        /// </summary>
+        public static string SelectiveSync_Error_CheckFailed {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_CheckFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: "{1}" in it would still be synced, because of an exception ("!") in the folder's ignore patterns. It's synced to this device again.
+        /// </summary>
+        public static string SelectiveSync_Error_ExceptionInside {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_ExceptionInside", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" can't be removed while its Syncthing folder is paused.
+        /// </summary>
+        public static string SelectiveSync_Error_FolderPaused {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_FolderPaused", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: "{1}" in it is excluded by the folder's ignore patterns, so this device has the only copy of it. If files like it may be deleted, add "(?d)" in front of their ignore pattern.
+        /// </summary>
+        public static string SelectiveSync_Error_IgnoredInside {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_IgnoredInside", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: "{1}" in it is used by the folder's ignore patterns (#include), and Syncthing would stop syncing the folder without it.
+        /// </summary>
+        public static string SelectiveSync_Error_IncludeFile {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_IncludeFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removing "{0}" didn't finish, and it isn't synced to this device at the moment. Use "Download to this device" to sync it again.
+        /// </summary>
+        public static string SelectiveSync_Error_Incomplete {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_Incomplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: it's also inside another Syncthing folder ({1}), which would sync the deletion to its other devices.
+        /// </summary>
+        public static string SelectiveSync_Error_InsideOtherFolder {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_InsideOtherFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" is a Syncthing folder. To stop syncing it, pause it or remove it in Syncthing.
+        /// </summary>
+        public static string SelectiveSync_Error_IsRoot {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_IsRoot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: "{1}" in it is a link or junction, which can't be removed safely.
+        /// </summary>
+        public static string SelectiveSync_Error_Link {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_Link", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: "{1}" in it has changes on this device which aren't synced to other devices.
+        /// </summary>
+        public static string SelectiveSync_Error_LocalChanges {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_LocalChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: it contains another Syncthing folder ({1}), which would sync the deletion to its other devices.
+        /// </summary>
+        public static string SelectiveSync_Error_NestedFolder {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_NestedFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: meanwhile, no other device has an up-to-date copy of "{1}" in it any more (was it removed there too?). It's synced to this device again, and nothing was lost.
+        /// </summary>
+        public static string SelectiveSync_Error_NoLongerAvailable {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_NoLongerAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: its drive has no Recycle Bin, so its files would be deleted permanently.
+        /// </summary>
+        public static string SelectiveSync_Error_NoRecycleBin {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_NoRecycleBin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" isn't a folder on this device.
+        /// </summary>
+        public static string SelectiveSync_Error_NotADirectory {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_NotADirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: Syncthing didn't confirm in time that it's no longer synced. It's synced to this device again; please try again later.
+        /// </summary>
+        public static string SelectiveSync_Error_NotConfirmed {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_NotConfirmed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: "{1}" in it changed since Syncthing last scanned it. Please try again in a moment.
+        /// </summary>
+        public static string SelectiveSync_Error_NotScanned {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_NotScanned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: its Syncthing folder isn't shared with any other device.
+        /// </summary>
+        public static string SelectiveSync_Error_NotShared {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_NotShared", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: no other device has an up-to-date copy of "{1}" in it, or that device isn't connected right now.
+        /// </summary>
+        public static string SelectiveSync_Error_NoValidCopy {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_NoValidCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: the path of "{1}" in it is too long for the Recycle Bin.
+        /// </summary>
+        public static string SelectiveSync_Error_PathTooLong {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_PathTooLong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed, as "{1}" in it couldn't be moved to the Recycle Bin. It's synced to this device again: files already moved to the Recycle Bin are downloaded again.
+        /// </summary>
+        public static string SelectiveSync_Error_RecycleFailed {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_RecycleFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: Syncthing couldn't finish scanning it. Please try again in a moment.
+        /// </summary>
+        public static string SelectiveSync_Error_ScanFailed {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_ScanFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: this version of Syncthing can't tell reliably whether other devices have a copy of it. Please update Syncthing.
+        /// </summary>
+        public static string SelectiveSync_Error_Unsupported {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_Unsupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Moved to the Recycle Bin, and kept on your other devices: {0}.
+        /// </summary>
+        public static string SelectiveSync_Removed_Message {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Removed_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removed from this device.
+        /// </summary>
+        public static string SelectiveSync_Removed_Title {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Removed_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking that your other devices have every file in {0}….
+        /// </summary>
+        public static string SelectiveSync_Removing_Message {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Removing_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removing from this device.
+        /// </summary>
+        public static string SelectiveSync_Removing_Title {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Removing_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply.
+        /// </summary>
+        public static string SelectiveSyncView_Apply {
+            get {
+                return ResourceManager.GetString("SelectiveSyncView_Apply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string SelectiveSyncView_Close {
+            get {
+                return ResourceManager.GetString("SelectiveSyncView_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checked subfolders are synced to this device. Unchecked ones are removed from this device (moved to the Recycle Bin, leaving an empty folder), but stay on your other devices.
+        /// </summary>
+        public static string SelectiveSyncView_Description {
+            get {
+                return ResourceManager.GetString("SelectiveSyncView_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading….
+        /// </summary>
+        public static string SelectiveSyncView_Loading {
+            get {
+                return ResourceManager.GetString("SelectiveSyncView_Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This folder has no subfolders.
+        /// </summary>
+        public static string SelectiveSyncView_NoSubfolders {
+            get {
+                return ResourceManager.GetString("SelectiveSyncView_NoSubfolders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removing subfolders from this device needs a newer version of Syncthing, which can tell reliably whether other devices have a copy of them. You can still download subfolders.
+        /// </summary>
+        public static string SelectiveSyncView_RemovalUnsupported {
+            get {
+                return ResourceManager.GetString("SelectiveSyncView_RemovalUnsupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading….
+        /// </summary>
+        public static string SelectiveSyncView_Status_Downloading {
+            get {
+                return ResourceManager.GetString("SelectiveSyncView_Status_Downloading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not on this device.
+        /// </summary>
+        public static string SelectiveSyncView_Status_NotOnThisDevice {
+            get {
+                return ResourceManager.GetString("SelectiveSyncView_Status_NotOnThisDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removed from this device.
+        /// </summary>
+        public static string SelectiveSyncView_Status_Removed {
+            get {
+                return ResourceManager.GetString("SelectiveSyncView_Status_Removed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking and removing….
+        /// </summary>
+        public static string SelectiveSyncView_Status_Removing {
+            get {
+                return ResourceManager.GetString("SelectiveSyncView_Status_Removing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose subfolders.
+        /// </summary>
+        public static string SelectiveSyncView_Title {
+            get {
+                return ResourceManager.GetString("SelectiveSyncView_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Syncthing Command-line Flags.
         /// </summary>
         public static string Settings_SyncthingCommandLineFlags {
@@ -973,11 +1443,74 @@ namespace SyncTrayzor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show sync status and Syncthing actions in Windows Explorer.
+        /// </summary>
+        public static string SettingsView_EnableExplorerIntegration {
+            get {
+                return ResourceManager.GetString("SettingsView_EnableExplorerIntegration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alert of failed file transfers.
         /// </summary>
         public static string SettingsView_EnableFailedTransferAlerts {
             get {
                 return ResourceManager.GetString("SettingsView_EnableFailedTransferAlerts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adds a SyncTrayzor submenu to the files and folders in your Syncthing folders, for example to choose which subfolders are kept on this device, or to pause a folder. Sync status icons also need the "Explorer status icons" option of the installer. Windows can only show a limited number of icon kinds across all programs, so other sync tools may hide them.
+        /// </summary>
+        public static string SettingsView_ExplorerIntegration_Description {
+            get {
+                return ResourceManager.GetString("SettingsView_ExplorerIntegration_Description", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Allow removing subfolders with Syncthing v2.1.7 and older (unsafe).
+        /// </summary>
+        public static string SettingsView_ExplorerIntegration_SkipVersionCheck {
+            get {
+                return ResourceManager.GetString("SettingsView_ExplorerIntegration_SkipVersionCheck", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Warning: this version of Syncthing also counts a copy on a device which ignores the files. If another device doesn't really have them, they are lost from all devices except for this device's Recycle Bin..
+        /// </summary>
+        public static string SelectiveSync_ConfirmRemove_UnreliableWarning {
+            get {
+                return ResourceManager.GetString("SelectiveSync_ConfirmRemove_UnreliableWarning", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: the folder's ignore patterns were changed while checking it. Please try again..
+        /// </summary>
+        public static string SelectiveSync_Error_IgnoresChanged {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_IgnoresChanged", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" is excluded by the folder's own ignore patterns. To sync it, change them in Syncthing..
+        /// </summary>
+        public static string SelectiveSync_Error_IgnoredByUser {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_IgnoredByUser", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to These versions also count a copy on a device which ignores the files, e.g. because it has removed the same subfolder or ignores some file types. SyncTrayzor may then delete the last copy..
+        /// </summary>
+        public static string SettingsView_ExplorerIntegration_SkipVersionCheck_ToolTip {
+            get {
+                return ResourceManager.GetString("SettingsView_ExplorerIntegration_SkipVersionCheck_ToolTip", resourceCulture);
             }
         }
         
@@ -1135,6 +1668,15 @@ namespace SyncTrayzor.Properties {
         public static string SettingsView_Section_Alerts {
             get {
                 return ResourceManager.GetString("SettingsView_Section_Alerts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Windows Explorer.
+        /// </summary>
+        public static string SettingsView_Section_ExplorerIntegration {
+            get {
+                return ResourceManager.GetString("SettingsView_Section_ExplorerIntegration", resourceCulture);
             }
         }
         

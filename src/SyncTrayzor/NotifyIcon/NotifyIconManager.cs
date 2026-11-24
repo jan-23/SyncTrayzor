@@ -30,6 +30,10 @@ namespace SyncTrayzor.NotifyIcon
         void EnsureIconVisible();
 
         Task<bool?> ShowBalloonAsync(object viewModel, int? timeout = null, CancellationToken? cancellationToken = null);
+
+        void ShowErrorBalloon(string title, string message);
+
+        void ShowInfoBalloon(string title, string message);
     }
 
     public class NotifyIconManager : INotifyIconManager
@@ -256,6 +260,16 @@ namespace SyncTrayzor.NotifyIcon
         private void SetShutdownMode()
         {
             application.ShutdownMode = _closeToTray ? ShutdownMode.OnExplicitShutdown : ShutdownMode.OnMainWindowClose;
+        }
+
+        public void ShowErrorBalloon(string title, string message)
+        {
+            taskbarIcon.ShowBalloonTip(title, message, BalloonIcon.Error);
+        }
+
+        public void ShowInfoBalloon(string title, string message)
+        {
+            taskbarIcon.ShowBalloonTip(title, message, BalloonIcon.Info);
         }
 
         public async Task<bool?> ShowBalloonAsync(object viewModel, int? timeout = null, CancellationToken? cancellationToken = null)

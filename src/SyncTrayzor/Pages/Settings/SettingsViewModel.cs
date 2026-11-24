@@ -66,6 +66,9 @@ namespace SyncTrayzor.Pages.Settings
         public bool PauseDevicesOnMeteredNetworksSupported { get; }
         public SettingItem<bool> PauseDevicesOnMeteredNetworks { get; }
 
+        public SettingItem<bool> EnableExplorerIntegration { get; }
+        public SettingItem<bool> ExplorerIntegrationSkipSyncthingVersionCheck { get; }
+
         public SettingItem<bool> ShowTrayIconOnlyOnClose { get; }
         public SettingItem<bool> ShowSynchronizedBalloonEvenIfNothingDownloaded { get; }
         public SettingItem<bool> ShowDeviceConnectivityBalloons { get; }
@@ -140,6 +143,9 @@ namespace SyncTrayzor.Pages.Settings
 
             PauseDevicesOnMeteredNetworks = CreateBasicSettingItem(x => x.PauseDevicesOnMeteredNetworks);
             PauseDevicesOnMeteredNetworksSupported = meteredNetworkManager.IsSupportedByWindows;
+
+            EnableExplorerIntegration = CreateBasicSettingItem(x => x.EnableExplorerIntegration);
+            ExplorerIntegrationSkipSyncthingVersionCheck = CreateBasicSettingItem(x => x.ExplorerIntegrationSkipSyncthingVersionCheck);
 
             ShowTrayIconOnlyOnClose = CreateBasicSettingItem(x => x.ShowTrayIconOnlyOnClose);
             ShowSynchronizedBalloonEvenIfNothingDownloaded = CreateBasicSettingItem(x => x.ShowSynchronizedBalloonEvenIfNothingDownloaded);

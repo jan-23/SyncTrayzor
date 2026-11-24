@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using SyncTrayzor.Services.Metering;
 using System.Collections.Generic;
+using SyncTrayzor.Services.ExplorerIntegration;
 
 namespace SyncTrayzor.Services
 {
@@ -24,6 +25,8 @@ namespace SyncTrayzor.Services
         private readonly IAlertsManager alertsManager;
         private readonly IMeteredNetworkManager meteredNetworkManager;
         private readonly IPathTransformer pathTransformer;
+        private readonly IExplorerIntegrationManager explorerIntegrationManager;
+        private readonly ISelectiveSyncService selectiveSyncService;
 
         public ConfigurationApplicator(
             IConfigurationProvider configurationProvider,
@@ -36,7 +39,9 @@ namespace SyncTrayzor.Services
             IConflictFileWatcher conflictFileWatcher,
             IAlertsManager alertsManager,
             IMeteredNetworkManager meteredNetworkManager,
-            IPathTransformer pathTransformer)
+            IPathTransformer pathTransformer,
+            IExplorerIntegrationManager explorerIntegrationManager,
+            ISelectiveSyncService selectiveSyncService)
         {
             this.configurationProvider = configurationProvider;
             this.configurationProvider.ConfigurationChanged += ConfigurationChanged;
@@ -51,6 +56,8 @@ namespace SyncTrayzor.Services
             this.alertsManager = alertsManager;
             this.meteredNetworkManager = meteredNetworkManager;
             this.pathTransformer = pathTransformer;
+            this.explorerIntegrationManager = explorerIntegrationManager;
+            this.selectiveSyncService = selectiveSyncService;
 
             this.syncthingManager.Folders.FoldersChanged += FoldersChanged;
             this.updateManager.VersionIgnored += VersionIgnored;
@@ -113,6 +120,9 @@ namespace SyncTrayzor.Services
             conflictFileWatcher.IsEnabled = configuration.EnableConflictFileMonitoring;
 
             meteredNetworkManager.IsEnabled = configuration.PauseDevicesOnMeteredNetworks;
+
+            explorerIntegrationManager.IsEnabled = configuration.EnableExplorerIntegration;
+            selectiveSyncService.SkipSyncthingVersionCheck = configuration.ExplorerIntegrationSkipSyncthingVersionCheck;
 
             alertsManager.EnableConflictedFileAlerts = configuration.EnableConflictFileMonitoring;
             alertsManager.EnableFailedTransferAlerts = configuration.EnableFailedTransferAlerts;

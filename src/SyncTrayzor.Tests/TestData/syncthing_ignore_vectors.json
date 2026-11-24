@@ -1,0 +1,606 @@
+[
+  {
+    "Stignore": "/build\n",
+    "Expanded": [
+      "(?i)/build",
+      "(?i)/build/**"
+    ],
+    "Results": [
+      {
+        "Path": "build",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "build/out.bin",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "Build/x",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "src/build",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "builds",
+        "Ignored": false,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "build\n",
+    "Expanded": [
+      "(?i)build",
+      "(?i)**/build",
+      "(?i)build/**",
+      "(?i)**/build/**"
+    ],
+    "Results": [
+      {
+        "Path": "build",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "build/a",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "src/build",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "src/build/x/y",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "builds",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "src/rebuild",
+        "Ignored": false,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "*.log\n",
+    "Expanded": [
+      "(?i)*.log",
+      "(?i)**/*.log",
+      "(?i)*.log/**",
+      "(?i)**/*.log/**"
+    ],
+    "Results": [
+      {
+        "Path": "a.log",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "dir/b.log",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "dir/sub/c.LOG",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "a.log.txt",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "log",
+        "Ignored": false,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "!/docs/keep\n/docs\n",
+    "Expanded": [
+      "(?i)!/docs/keep",
+      "(?i)!/docs/keep/**",
+      "(?i)/docs",
+      "(?i)/docs/**"
+    ],
+    "Results": [
+      {
+        "Path": "docs",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "docs/a.md",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "docs/keep",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "docs/keep/x.md",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "docsx",
+        "Ignored": false,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "!/important.log\n*.log\n",
+    "Expanded": [
+      "(?i)!/important.log",
+      "(?i)!/important.log/**",
+      "(?i)*.log",
+      "(?i)**/*.log",
+      "(?i)*.log/**",
+      "(?i)**/*.log/**"
+    ],
+    "Results": [
+      {
+        "Path": "important.log",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "other.log",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "dir/important.log",
+        "Ignored": true,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "!/docs\n*\n",
+    "Expanded": [
+      "(?i)!/docs",
+      "(?i)!/docs/**",
+      "(?i)*",
+      "(?i)**/*",
+      "(?i)*/**",
+      "(?i)**/*/**"
+    ],
+    "Results": [
+      {
+        "Path": "docs",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "docs/a/b",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "other",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "other/x",
+        "Ignored": true,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "(?d)*.tmp\n.DS_Store\n",
+    "Expanded": [
+      "(?d)(?i)*.tmp",
+      "(?d)(?i)**/*.tmp",
+      "(?d)(?i)*.tmp/**",
+      "(?d)(?i)**/*.tmp/**",
+      "(?i).ds_store",
+      "(?i)**/.ds_store",
+      "(?i).ds_store/**",
+      "(?i)**/.ds_store/**"
+    ],
+    "Results": [
+      {
+        "Path": "a.tmp",
+        "Ignored": true,
+        "Deletable": true
+      },
+      {
+        "Path": "x/b.tmp",
+        "Ignored": true,
+        "Deletable": true
+      },
+      {
+        "Path": ".DS_Store",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "x/.ds_store",
+        "Ignored": true,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "/a/**/z\n",
+    "Expanded": [
+      "(?i)/a/**/z",
+      "(?i)/a/**/z/**"
+    ],
+    "Results": [
+      {
+        "Path": "a/z",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "a/b/z",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "a/b/c/z",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "a/b/c/zz",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "b/a/z",
+        "Ignored": false,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "**/cache/\n",
+    "Expanded": [
+      "(?i)**/cache/**",
+      "(?i)cache/**"
+    ],
+    "Results": [
+      {
+        "Path": "cache",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "cache/x",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "a/cache",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "a/cache/b",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "a/cachex",
+        "Ignored": false,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "foo?.txt\nbar[0-9]\nbaz[!a]\n",
+    "Expanded": [
+      "(?i)foo?.txt",
+      "(?i)**/foo?.txt",
+      "(?i)foo?.txt/**",
+      "(?i)**/foo?.txt/**",
+      "(?i)bar[0-9]",
+      "(?i)**/bar[0-9]",
+      "(?i)bar[0-9]/**",
+      "(?i)**/bar[0-9]/**",
+      "(?i)baz[!a]",
+      "(?i)**/baz[!a]",
+      "(?i)baz[!a]/**",
+      "(?i)**/baz[!a]/**"
+    ],
+    "Results": [
+      {
+        "Path": "foo1.txt",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "foo12.txt",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "bar5",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "barx",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "bazb",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "baza",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "foo/.txt",
+        "Ignored": false,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "*.{jpg,png}\n/x{1,2}/**\n",
+    "Expanded": [
+      "(?i)*.{jpg,png}",
+      "(?i)**/*.{jpg,png}",
+      "(?i)*.{jpg,png}/**",
+      "(?i)**/*.{jpg,png}/**",
+      "(?i)/x{1,2}/**"
+    ],
+    "Results": [
+      {
+        "Path": "a.jpg",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "a.png",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "a.gif",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "d/e.PNG",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "x1/f",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "x2/g/h",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "x3/f",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "x1",
+        "Ignored": false,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "/foo|[1|]\n",
+    "Expanded": [
+      "(?i)/foo\\[1\\]",
+      "(?i)/foo\\[1\\]/**"
+    ],
+    "Results": [
+      {
+        "Path": "foo[1]",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "foo1",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "foo[1]/x",
+        "Ignored": true,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "#escape=\\\n/foo\\[1\\]\n",
+    "Expanded": [
+      "(?i)/foo\\[1\\]",
+      "(?i)/foo\\[1\\]/**"
+    ],
+    "Results": [
+      {
+        "Path": "foo[1]",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "foo1",
+        "Ignored": false,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "// comment\n\n/a b/c\n",
+    "Expanded": [
+      "(?i)/a b/c",
+      "(?i)/a b/c/**"
+    ],
+    "Results": [
+      {
+        "Path": "a b/c",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "a b/c/d",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "a b",
+        "Ignored": false,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "*\n!/keep/**\n",
+    "Expanded": [
+      "(?i)*",
+      "(?i)**/*",
+      "(?i)*/**",
+      "(?i)**/*/**",
+      "(?i)!/keep/**"
+    ],
+    "Results": [
+      {
+        "Path": "keep",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "keep/a",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "x",
+        "Ignored": true,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "/a\n!/a/b\n",
+    "Expanded": [
+      "(?i)/a",
+      "(?i)/a/**",
+      "(?i)!/a/b",
+      "(?i)!/a/b/**"
+    ],
+    "Results": [
+      {
+        "Path": "a",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "a/b",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "a/c",
+        "Ignored": true,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "/Photos/2019\n/Photos/2020\n",
+    "Expanded": [
+      "(?i)/photos/2019",
+      "(?i)/photos/2019/**",
+      "(?i)/photos/2020",
+      "(?i)/photos/2020/**"
+    ],
+    "Results": [
+      {
+        "Path": "photos/2019",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "Photos/2019/img.jpg",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "Photos/2021/x",
+        "Ignored": false,
+        "Deletable": false
+      },
+      {
+        "Path": "Photos",
+        "Ignored": false,
+        "Deletable": false
+      }
+    ]
+  },
+  {
+    "Stignore": "",
+    "Expanded": [],
+    "Results": [
+      {
+        "Path": ".stfolder",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": ".stignore",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": ".stversions/x",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "~syncthing~a.tmp",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": ".syncthing.b.tmp",
+        "Ignored": true,
+        "Deletable": false
+      },
+      {
+        "Path": "normal",
+        "Ignored": false,
+        "Deletable": false
+      }
+    ]
+  }
+]
