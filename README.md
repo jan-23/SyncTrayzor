@@ -200,7 +200,7 @@ If something goes wrong once `.stignore` is being changed (Syncthing doesn't con
 If even that fails (e.g. Syncthing stopped meanwhile), SyncTrayzor says so, and restores it the next time Syncthing runs.
 Several subfolders removed together (e.g. in "Choose subfolders…") change `.stignore` only once, so Syncthing only rescans once.
 
-Removing subfolders needs a Syncthing version newer than v2.1.7. Older versions also report a file as present on another device when that device ignores it (and may have deleted it, e.g. by removing the same subfolder), so SyncTrayzor couldn't make sure the files are safe elsewhere. With older versions, "Remove from this device" isn't offered; downloading subfolders still works.
+Removing subfolders needs a Syncthing version newer than v2.1.7. Older versions also report a file as present on another device when that device ignores it (and may have deleted it, e.g. by removing the same subfolder), so SyncTrayzor couldn't make sure the files are safe elsewhere. With older versions, "Remove from this device" isn't offered; downloading subfolders still works. If you know that no other device ignores or removes these subfolders, you can allow it anyway in Settings ("Allow removing subfolders with Syncthing v2.1.7 and older"), at your own risk.
 At the time of writing, no such Syncthing release exists yet (the fix is merged, but not released), and SyncTrayzor ships Syncthing v2.0.3: removing subfolders becomes available once Syncthing is updated to a newer release.
 
 Keep in mind that removing a subfolder relies on your other devices: once it's removed here, deleting it on the device that still has it deletes the last copy. SyncTrayzor can't tell whether another device still has the files on disk, only what it last reported.

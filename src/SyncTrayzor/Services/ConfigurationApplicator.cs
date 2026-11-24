@@ -26,6 +26,7 @@ namespace SyncTrayzor.Services
         private readonly IMeteredNetworkManager meteredNetworkManager;
         private readonly IPathTransformer pathTransformer;
         private readonly IExplorerIntegrationManager explorerIntegrationManager;
+        private readonly ISelectiveSyncService selectiveSyncService;
 
         public ConfigurationApplicator(
             IConfigurationProvider configurationProvider,
@@ -39,7 +40,8 @@ namespace SyncTrayzor.Services
             IAlertsManager alertsManager,
             IMeteredNetworkManager meteredNetworkManager,
             IPathTransformer pathTransformer,
-            IExplorerIntegrationManager explorerIntegrationManager)
+            IExplorerIntegrationManager explorerIntegrationManager,
+            ISelectiveSyncService selectiveSyncService)
         {
             this.configurationProvider = configurationProvider;
             this.configurationProvider.ConfigurationChanged += ConfigurationChanged;
@@ -55,6 +57,7 @@ namespace SyncTrayzor.Services
             this.meteredNetworkManager = meteredNetworkManager;
             this.pathTransformer = pathTransformer;
             this.explorerIntegrationManager = explorerIntegrationManager;
+            this.selectiveSyncService = selectiveSyncService;
 
             this.syncthingManager.Folders.FoldersChanged += FoldersChanged;
             this.updateManager.VersionIgnored += VersionIgnored;
@@ -119,6 +122,7 @@ namespace SyncTrayzor.Services
             meteredNetworkManager.IsEnabled = configuration.PauseDevicesOnMeteredNetworks;
 
             explorerIntegrationManager.IsEnabled = configuration.EnableExplorerIntegration;
+            selectiveSyncService.SkipSyncthingVersionCheck = configuration.ExplorerIntegrationSkipSyncthingVersionCheck;
 
             alertsManager.EnableConflictedFileAlerts = configuration.EnableConflictFileMonitoring;
             alertsManager.EnableFailedTransferAlerts = configuration.EnableFailedTransferAlerts;

@@ -193,6 +193,19 @@ namespace SyncTrayzor.Tests
         }
 
         [Fact]
+        public async Task CanSkipTheSyncthingVersionCheck()
+        {
+            CreateFile("2019/a.jpg");
+            ((SyncthingCapabilities)syncthing.Manager.Capabilities).SyncthingVersion = new Version(2, 1, 7);
+            service.SkipSyncthingVersionCheck = true;
+
+            var result = await RemoveAsync("2019");
+
+            Assert.True(result.Succeeded, result.Error);
+            Assert.Single(recycleBin.Moved);
+        }
+
+        [Fact]
         public async Task RollsBackIfSyncthingDoesNotConfirm()
         {
             CreateFile("2019/a.jpg");

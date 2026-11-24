@@ -1055,6 +1055,12 @@ Please donate to the syncthing project.</value>
   <data name="SettingsView_ExplorerIntegration_Description" xml:space="preserve">
     <value>Adds a SyncTrayzor submenu to the files and folders in your Syncthing folders, for example to choose which subfolders are kept on this device, or to pause a folder. Sync status icons also need the "Explorer status icons" option of the installer. Windows can only show a limited number of icon kinds across all programs, so other sync tools may hide them.</value>
   </data>
+  <data name="SettingsView_ExplorerIntegration_SkipVersionCheck" xml:space="preserve">
+    <value>Allow removing subfolders with Syncthing v2.1.7 and older (unsafe)</value>
+  </data>
+  <data name="SettingsView_ExplorerIntegration_SkipVersionCheck_ToolTip" xml:space="preserve">
+    <value>These versions also count a copy on a device which ignores the files. If another device has removed the same subfolder, SyncTrayzor may delete the last copy.</value>
+  </data>
   <data name="ExplorerMenu_RemoveFromDevice" xml:space="preserve">
     <value>Remove from this device</value>
     <comment>Explorer context menu item on a subfolder: stops syncing it to this device and deletes the local copy (other devices keep it)</comment>

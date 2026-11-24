@@ -71,6 +71,7 @@ namespace SyncTrayzor.Services.Config
         public bool ConflictResolverDeletesToRecycleBin { get; set; }
         public bool PauseDevicesOnMeteredNetworks { get; set; }
         public bool EnableExplorerIntegration { get; set; }
+        public bool ExplorerIntegrationSkipSyncthingVersionCheck { get; set; }
         public bool HaveDonated { get; set; }
         public IconAnimationMode IconAnimationMode { get; set; }
         public string OpenFolderCommand { get; set; }
@@ -111,6 +112,7 @@ namespace SyncTrayzor.Services.Config
             ConflictResolverDeletesToRecycleBin = true;
             PauseDevicesOnMeteredNetworks = true;
             EnableExplorerIntegration = false;
+            ExplorerIntegrationSkipSyncthingVersionCheck = false;
             HaveDonated = false;
             IconAnimationMode = IconAnimationMode.DataTransferring;
             OpenFolderCommand = "explorer.exe \"{0}\"";
@@ -154,6 +156,7 @@ namespace SyncTrayzor.Services.Config
             ConflictResolverDeletesToRecycleBin = other.ConflictResolverDeletesToRecycleBin;
             PauseDevicesOnMeteredNetworks = other.PauseDevicesOnMeteredNetworks;
             EnableExplorerIntegration = other.EnableExplorerIntegration;
+            ExplorerIntegrationSkipSyncthingVersionCheck = other.ExplorerIntegrationSkipSyncthingVersionCheck;
             HaveDonated = other.HaveDonated;
             IconAnimationMode = other.IconAnimationMode;
             OpenFolderCommand = other.OpenFolderCommand;
@@ -180,7 +183,7 @@ namespace SyncTrayzor.Services.Config
                 $"DisableHardwareRendering={DisableHardwareRendering} HideIntelXeWarningMessage={HideIntelXeWarningMessage} EnableFailedTransferAlerts={EnableFailedTransferAlerts} " +
                 $"EnableConflictFileMonitoring={EnableConflictFileMonitoring} " +
                 $"ConflictResolverDeletesToRecycleBin={ConflictResolverDeletesToRecycleBin} PauseDevicesOnMeteredNetworks={PauseDevicesOnMeteredNetworks} " +
-                $"EnableExplorerIntegration={EnableExplorerIntegration} " +
+                $"EnableExplorerIntegration={EnableExplorerIntegration} ExplorerIntegrationSkipSyncthingVersionCheck={ExplorerIntegrationSkipSyncthingVersionCheck} " +
                 $"HaveDonated={HaveDonated} IconAnimationMode={IconAnimationMode} OpenFolderCommand={OpenFolderCommand} ShowFileInFolderCommand={ShowFileInFolderCommand}" +
                 $"LogLevel={LogLevel}" +
                 $"KeepActivityPopupOpen={KeepActivityPopupOpen}>" +

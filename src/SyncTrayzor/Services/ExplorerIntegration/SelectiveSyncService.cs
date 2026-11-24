@@ -35,6 +35,13 @@ namespace SyncTrayzor.Services.ExplorerIntegration
         bool CanRemove { get; }
 
         /// <summary>
+        /// Allows removing directories although the Syncthing version can't report reliably which other devices have
+        /// a valid copy (see <see cref="Syncthing.ISyncthingCapabilities.SupportsReliableAvailability"/>). Then a copy
+        /// on a device which ignores the files counts too, so the last copy may be deleted.
+        /// </summary>
+        bool SkipSyncthingVersionCheck { get; set; }
+
+        /// <summary>
         /// Stops syncing subfolders to this device and deletes their local copies (to the Recycle Bin), keeping empty
         /// placeholders. See <see cref="SelectiveSyncService"/> for the checks. Each directory is checked on its own;
         /// the ignore patterns are changed once for all of them.
@@ -104,7 +111,19 @@ namespace SyncTrayzor.Services.ExplorerIntegration
             this.syncthingManager.DataLoaded += (o, e) => _ = RecoverPendingRemovalsAsync();
         }
 
-        public bool CanRemove => syncthingManager.Capabilities.SupportsReliableAvailability;
+        public bool CanRemove => SkipSyncthingVersionCheck || syncthingManager.Capabilities.SupportsReliableAvailability;
+
+        private bool skipSyncthingVersionCheck;
+        public bool SkipSyncthingVersionCheck
+        {
+            get => skipSyncthingVersionCheck;
+            set
+            {
+                if (value && !skipSyncthingVersionCheck)
+                    logger.Warn("Removing subfolders is allowed with any Syncthing version: copies on devices which ignore them may count as valid");
+                skipSyncthingVersionCheck = value;
+            }
+        }
 
         /// <summary>How long to wait for Syncthing to confirm that removed directories are ignored</summary>
         public TimeSpan ConfirmIgnoredTimeout { get; set; } = TimeSpan.FromMinutes(2);

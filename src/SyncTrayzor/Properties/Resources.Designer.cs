@@ -1468,6 +1468,24 @@ namespace SyncTrayzor.Properties {
                 return ResourceManager.GetString("SettingsView_ExplorerIntegration_Description", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Allow removing subfolders with Syncthing v2.1.7 and older (unsafe).
+        /// </summary>
+        public static string SettingsView_ExplorerIntegration_SkipVersionCheck {
+            get {
+                return ResourceManager.GetString("SettingsView_ExplorerIntegration_SkipVersionCheck", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to These versions also count a copy on a device which ignores the files. If another device has removed the same subfolder, SyncTrayzor may delete the last copy..
+        /// </summary>
+        public static string SettingsView_ExplorerIntegration_SkipVersionCheck_ToolTip {
+            get {
+                return ResourceManager.GetString("SettingsView_ExplorerIntegration_SkipVersionCheck_ToolTip", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Log Level:.
