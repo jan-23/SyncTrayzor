@@ -52,10 +52,10 @@ namespace SyncTrayzor.Tests
         [InlineData(new[] { "*.tmp", "#include .stglobalignore" }, "a/b")]
         [InlineData(new[] { "#escape=\\", "*.tmp" }, "x[1]")]
         [InlineData(new string[0], "a")]
-        public void UnignoreUndoesIgnore(string[] lines, string path)
+        public void RemoveIgnoresUndoesIgnore(string[] lines, string path)
         {
             var ignored = IgnorePatternEditor.Ignore(lines, [path]);
-            Assert.Equal(lines, IgnorePatternEditor.Unignore(ignored, [path]));
+            Assert.Equal(lines, IgnorePatternEditor.RemoveIgnores(ignored, [path]));
         }
 
         [Fact]
@@ -67,26 +67,18 @@ namespace SyncTrayzor.Tests
         }
 
         [Fact]
-        public void Unignore_RemovesExactLine()
+        public void RemoveIgnores_RemovesExactLine()
         {
             var lines = new List<string> { "/build/", "*.tmp" };
-            var result = IgnorePatternEditor.Unignore(lines, ["build"]);
+            var result = IgnorePatternEditor.RemoveIgnores(lines, ["build"]);
             Assert.Equal(new[] { "*.tmp" }, result);
         }
 
         [Fact]
-        public void Unignore_AddsExceptionWhenIgnoredByWildcard()
+        public void RemoveIgnores_LeavesTheUsersOwnPatternsAlone()
         {
-            var lines = new List<string> { "*.log" };
-            var result = IgnorePatternEditor.Unignore(lines, ["important.log"]);
-            Assert.Equal(new[] { "!/important.log", "*.log" }, result);
-        }
-
-        [Fact]
-        public void Unignore_DoesNotDuplicateException()
-        {
-            var lines = new List<string> { "!/important.log", "*.log" };
-            var result = IgnorePatternEditor.Unignore(lines, ["important.log"]);
+            var lines = new List<string> { "*.log", "!/keep" };
+            var result = IgnorePatternEditor.RemoveIgnores(lines, ["important.log", "keep"]);
             Assert.Equal(lines, result);
         }
 

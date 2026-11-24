@@ -41,6 +41,9 @@ namespace SyncTrayzor.Services.ExplorerIntegration
         /// </summary>
         bool SkipSyncthingVersionCheck { get; set; }
 
+        /// <summary>The question to confirm before removing the named directories, with a warning if it's less safe</summary>
+        string ConfirmRemoveMessage(string names);
+
         /// <summary>
         /// Stops syncing subfolders to this device and deletes their local copies (to the Recycle Bin), keeping empty
         /// placeholders. See <see cref="SelectiveSyncService"/> for the checks. Each directory is checked on its own;
@@ -48,7 +51,10 @@ namespace SyncTrayzor.Services.ExplorerIntegration
         /// </summary>
         Task<IReadOnlyList<RemovalResult>> RemoveFromDeviceAsync(IReadOnlyList<FolderPath> directories, CancellationToken cancellationToken);
 
-        /// <summary>Starts syncing subfolders to this device again. Syncthing then downloads them.</summary>
+        /// <summary>
+        /// Starts syncing subfolders to this device again, which SyncTrayzor removed. Syncthing then downloads them.
+        /// Throws a <see cref="SelectiveSyncException"/> if one stays excluded by the user's own ignore patterns.
+        /// </summary>
         Task DownloadToDeviceAsync(IReadOnlyList<FolderPath> directories, CancellationToken cancellationToken);
 
         /// <summary>The direct subfolders of a directory, as known to any device, and whether each is synced to this one</summary>
@@ -66,8 +72,10 @@ namespace SyncTrayzor.Services.ExplorerIntegration
     ///   ignore patterns already exclude (this device has the only copy of those, except for "(?d)" patterns);</item>
     ///   <item>after a rescan, every file on disk matches Syncthing's index, this device has the newest version, and
     ///   another trusted device that's connected right now has a valid copy of that version;</item>
+    ///   <item>nobody changed the ignore patterns during these checks;</item>
     ///   <item>Syncthing's index confirms the directory is ignored (so it won't notice the deletion), no exception
-    ///   pattern keeps anything inside it synced, and right before deleting, another device still has each file.</item>
+    ///   pattern keeps anything inside it synced, and after a short wait (so that another device removing the same
+    ///   directory at the same time has announced that), another device still has each file.</item>
     /// </list>
     /// Then only the checked files are moved to the Recycle Bin, and only if they haven't changed since.
     ///
@@ -113,7 +121,8 @@ namespace SyncTrayzor.Services.ExplorerIntegration
 
         public bool CanRemove => SkipSyncthingVersionCheck || syncthingManager.Capabilities.SupportsReliableAvailability;
 
-        private bool skipSyncthingVersionCheck;
+        // Set from the configuration, read by operations on other threads
+        private volatile bool skipSyncthingVersionCheck;
         public bool SkipSyncthingVersionCheck
         {
             get => skipSyncthingVersionCheck;
@@ -127,6 +136,20 @@ namespace SyncTrayzor.Services.ExplorerIntegration
 
         /// <summary>How long to wait for Syncthing to confirm that removed directories are ignored</summary>
         public TimeSpan ConfirmIgnoredTimeout { get; set; } = TimeSpan.FromMinutes(2);
+
+        /// <summary>
+        /// How long to wait after that before checking once more that other devices have the files: if another device
+        /// removes the same directory at the same time, this gives its index update time to arrive.
+        /// </summary>
+        public TimeSpan SettleDelay { get; set; } = TimeSpan.FromSeconds(10);
+
+        public string ConfirmRemoveMessage(string names)
+        {
+            var message = Localizer.F(Resources.SelectiveSync_ConfirmRemove_Message, names);
+            if (!syncthingManager.Capabilities.SupportsReliableAvailability)
+                message += Environment.NewLine + Environment.NewLine + Resources.SelectiveSync_ConfirmRemove_UnreliableWarning;
+            return message;
+        }
 
         public Task<IReadOnlyList<RemovalResult>> RemoveFromDeviceAsync(IReadOnlyList<FolderPath> directories, CancellationToken cancellationToken)
         {
@@ -149,7 +172,7 @@ namespace SyncTrayzor.Services.ExplorerIntegration
         }
 
         /// <summary>What was checked in a directory, and may be deleted if it hasn't changed since</summary>
-        private sealed record RemovalPlan(FolderPath Directory, string LocalPath, Dictionary<string, FileState> Files);
+        private sealed record RemovalPlan(FolderPath Directory, string LocalPath, bool ExistedLocally, Dictionary<string, FileState> Files);
 
         /// <param name="GlobalVersion">The newest version which another device had, or null for files which are never synced</param>
         private sealed record FileState(long Size, DateTime ModifiedUtc, IReadOnlyList<string> GlobalVersion);
@@ -182,6 +205,16 @@ namespace SyncTrayzor.Services.ExplorerIntegration
             if (plans.Count == 0)
                 return results;
 
+            // The checks take a while: don't overwrite changes made to the ignore patterns meanwhile
+            var currentLines = await syncthingManager.FetchIgnoresAsync(folderId, cancellationToken);
+            if (!currentLines.SequenceEqual(originalLines))
+            {
+                logger.Info("The ignore patterns of folder {0} changed while checking: not removing anything", folderId);
+                foreach (var plan in plans)
+                    results.Add(new RemovalResult(plan.Directory, Localizer.F(Resources.SelectiveSync_Error_IgnoresChanged, DisplayName(plan.Directory))));
+                return results;
+            }
+
             // From here on, anything that goes wrong must be rolled back, so nothing is left ignored with local data.
             // The journal makes sure that also happens if SyncTrayzor is interrupted.
             var pending = plans.Select(x => new PendingRemoval(folderId, x.Directory.RelativePath)).ToList();
@@ -198,6 +231,8 @@ namespace SyncTrayzor.Services.ExplorerIntegration
 
                 // 3. Wait until Syncthing has applied that, so it won't notice the deletions
                 var confirmed = await WaitUntilIgnoredInIndexAsync(folderId, plans.Select(x => x.Directory).ToList(), cancellationToken);
+                if (confirmed.Count > 0)
+                    await Task.Delay(SettleDelay, cancellationToken);
                 matcher = await statusService.RefreshIgnoresAsync(folderId, cancellationToken);
                 var folder = FetchFolder(folderId);
 
@@ -272,7 +307,7 @@ namespace SyncTrayzor.Services.ExplorerIntegration
                 else if (current.SequenceEqual(writtenLines))
                     restored = IgnorePatternEditor.Ignore(originalLines, removedPaths);
                 else
-                    restored = IgnorePatternEditor.Unignore(current, failed.Select(x => x.RelativePath));
+                    restored = IgnorePatternEditor.RemoveIgnores(current, failed.Select(x => x.RelativePath));
 
                 if (restored != null && !restored.SequenceEqual(current))
                     await syncthingManager.SetIgnoresAsync(folderId, restored, CancellationToken.None);
@@ -306,7 +341,8 @@ namespace SyncTrayzor.Services.ExplorerIntegration
                         if (syncthingManager.Folders.TryFetchById(group.Key, out _))
                         {
                             var lines = await syncthingManager.FetchIgnoresAsync(group.Key, CancellationToken.None);
-                            var restored = IgnorePatternEditor.Unignore(lines, group.Select(x => x.RelativePath));
+                            // Only remove what the removal added: if that's gone already, the user's own patterns apply
+                            var restored = IgnorePatternEditor.RemoveIgnores(lines, group.Select(x => x.RelativePath));
                             if (!restored.SequenceEqual(lines))
                                 await syncthingManager.SetIgnoresAsync(group.Key, restored, CancellationToken.None);
                             await statusService.RefreshIgnoresAsync(group.Key, CancellationToken.None);
@@ -334,13 +370,15 @@ namespace SyncTrayzor.Services.ExplorerIntegration
                 throw new SelectiveSyncException(Localizer.F(Resources.SelectiveSync_Error_Unsupported, name));
             if (directory.IsRoot)
                 throw new SelectiveSyncException(Localizer.F(Resources.SelectiveSync_Error_IsRoot, name));
-            if (!Directory.Exists(localPath))
+            // A directory which isn't here (yet) can be removed too: then only its download stops
+            if (File.Exists(localPath))
                 throw new SelectiveSyncException(Localizer.F(Resources.SelectiveSync_Error_NotADirectory, name));
-            if (statusService.IsFolderPaused(directory.FolderId))
-                throw new SelectiveSyncException(Localizer.F(Resources.SelectiveSync_Error_FolderPaused, name));
+            var existsLocally = Directory.Exists(localPath);
             var folder = FetchFolder(directory.FolderId);
             if (folder == null || folder.IsReceiveEncrypted)
                 throw new SelectiveSyncException(Localizer.F(Resources.SelectiveSync_Error_NotADirectory, name));
+            if (folder.IsPaused)
+                throw new SelectiveSyncException(Localizer.F(Resources.SelectiveSync_Error_FolderPaused, name));
             if (!folder.DeviceIds.Any(x => x != syncthingManager.LocalDeviceId && !folder.UntrustedDeviceIds.Contains(x)))
                 throw new SelectiveSyncException(Localizer.F(Resources.SelectiveSync_Error_NotShared, name));
             if (matcher.IsIgnored(directory.RelativePath))
@@ -348,19 +386,23 @@ namespace SyncTrayzor.Services.ExplorerIntegration
             if (!recycleBin.IsAvailableFor(localPath))
                 throw new SelectiveSyncException(Localizer.F(Resources.SelectiveSync_Error_NoRecycleBin, name));
 
-            // Another Syncthing folder inside would sync the deletion to its own devices...
-            var nestedRoot = statusService.Roots.FirstOrDefault(x => IsBelow(x, localPath));
+            // Another Syncthing folder inside (or being this directory) would sync the deletion to its own devices...
+            var otherRoots = syncthingManager.Folders.FetchAll()
+                .Where(x => x.FolderId != directory.FolderId)
+                .Select(x => ExplorerStatusService.NormalizeRoot(x.Path))
+                .ToList();
+            var nestedRoot = otherRoots.FirstOrDefault(x => IsBelow(x, localPath) || SamePath(x, localPath));
             if (nestedRoot != null)
                 throw new SelectiveSyncException(Localizer.F(Resources.SelectiveSync_Error_NestedFolder, name, nestedRoot));
             // ... and so would one which contains this folder (it isn't affected by this folder's ignore patterns)
-            var enclosingRoot = statusService.Roots.FirstOrDefault(x => IsBelow(localPath, x) && !SamePath(x, directory.Root));
+            var enclosingRoot = otherRoots.FirstOrDefault(x => IsBelow(localPath, x));
             if (enclosingRoot != null)
                 throw new SelectiveSyncException(Localizer.F(Resources.SelectiveSync_Error_InsideOtherFolder, name, enclosingRoot));
 
             // The directory itself, or a directory above it, may be a link to somewhere else
             for (var current = new DirectoryInfo(localPath); current != null && !SamePath(current.FullName, directory.Root); current = current.Parent)
             {
-                if ((current.Attributes & FileAttributes.ReparsePoint) != 0)
+                if (current.Exists && (current.Attributes & FileAttributes.ReparsePoint) != 0)
                     throw new SelectiveSyncException(Localizer.F(Resources.SelectiveSync_Error_Link, name, current.FullName));
             }
 
@@ -369,7 +411,7 @@ namespace SyncTrayzor.Services.ExplorerIntegration
             if (include != null)
                 throw new SelectiveSyncException(Localizer.F(Resources.SelectiveSync_Error_IncludeFile, name, Path.GetRelativePath(localPath, include)));
 
-            // Make sure Syncthing has seen every local change below the directory (this waits for the scan)
+            // Make sure Syncthing has seen every local change below the directory, including its deletion (this waits for the scan)
             try
             {
                 await syncthingManager.ScanOrThrowAsync(directory.FolderId, directory.RelativePath);
@@ -384,7 +426,7 @@ namespace SyncTrayzor.Services.ExplorerIntegration
             var files = new Dictionary<string, FileState>(StringComparer.Ordinal);
             var toCheck = new List<string>();
             var deletable = new List<string>();
-            foreach (var entry in EnumerateEntries(localPath))
+            foreach (var entry in existsLocally ? EnumerateEntries(localPath) : [])
             {
                 var relativePath = ToRelative(directory, localPath, entry.FullName);
                 if ((entry.Attributes & FileAttributes.ReparsePoint) != 0)
@@ -437,7 +479,7 @@ namespace SyncTrayzor.Services.ExplorerIntegration
                 });
             }
 
-            return new RemovalPlan(directory, localPath, files);
+            return new RemovalPlan(directory, localPath, existsLocally, files);
         }
 
         /// <summary>
@@ -484,6 +526,14 @@ namespace SyncTrayzor.Services.ExplorerIntegration
         private async Task<string> DeleteCheckedFilesAsync(RemovalPlan plan, IgnoreMatcher matcher, Folder folder, CancellationToken cancellationToken)
         {
             var name = DisplayName(plan.Directory);
+
+            // Nothing was downloaded yet: just leave a placeholder. (If Syncthing created it meanwhile, its contents
+            // weren't checked, and the check below refuses.)
+            if (!plan.ExistedLocally && !Directory.Exists(plan.LocalPath))
+            {
+                Directory.CreateDirectory(plan.LocalPath);
+                return null;
+            }
 
             // Compare what's on disk now with what was checked
             var current = new List<(string RelativePath, FileSystemInfo Entry)>();
@@ -572,11 +622,16 @@ namespace SyncTrayzor.Services.ExplorerIntegration
                     {
                         logger.Info("Downloading {0} in folder {1} to this device", String.Join(", ", group.Select(x => x.RelativePath)), group.Key);
                         var lines = await syncthingManager.FetchIgnoresAsync(group.Key, cancellationToken);
-                        var newLines = IgnorePatternEditor.Unignore(lines, group.Select(x => x.RelativePath).ToList());
+                        var newLines = IgnorePatternEditor.RemoveIgnores(lines, group.Select(x => x.RelativePath));
                         if (!newLines.SequenceEqual(lines))
                             await syncthingManager.SetIgnoresAsync(group.Key, newLines, cancellationToken);
                         // Syncthing rescans after saving, which applies the patterns and starts downloading
-                        await statusService.RefreshIgnoresAsync(group.Key, cancellationToken);
+                        var matcher = await statusService.RefreshIgnoresAsync(group.Key, cancellationToken);
+
+                        // SyncTrayzor only removes its own lines. What the user's own patterns exclude, they change themselves.
+                        var stillIgnored = group.Where(x => matcher.IsIgnored(x.RelativePath)).ToList();
+                        if (stillIgnored.Count > 0)
+                            throw new SelectiveSyncException(Localizer.F(Resources.SelectiveSync_Error_IgnoredByUser, DisplayName(stillIgnored[0])));
                     }
                 }
                 finally

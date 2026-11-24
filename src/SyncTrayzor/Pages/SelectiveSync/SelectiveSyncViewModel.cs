@@ -93,7 +93,7 @@ namespace SyncTrayzor.Pages.SelectiveSync
             {
                 var names = String.Join(", ", removals.Select(x => x.Name));
                 var answer = windowManager.ShowMessageBox(
-                    Localizer.F(Resources.SelectiveSync_ConfirmRemove_Message, names),
+                    selectiveSyncService.ConfirmRemoveMessage(names),
                     Resources.SelectiveSync_ConfirmRemove_Title,
                     System.Windows.MessageBoxButton.OKCancel,
                     System.Windows.MessageBoxImage.Question,
@@ -137,9 +137,15 @@ namespace SyncTrayzor.Pages.SelectiveSync
             catch (Exception e)
             {
                 logger.Info(e, "Downloading subfolders failed");
+                var message = e is SelectiveSyncException ? e.Message : Localizer.F(Resources.ExplorerIntegration_ActionFailed_Message, e.Message);
+                // Reload to show which ones are synced now
+                var current = await TryListSubfoldersAsync();
                 foreach (var subfolder in downloads)
                 {
-                    subfolder.Status = Localizer.F(Resources.ExplorerIntegration_ActionFailed_Message, e.Message);
+                    var info = current.FirstOrDefault(x => x.Path == subfolder.Info.Path);
+                    if (info != null)
+                        subfolder.Info = info;
+                    subfolder.Status = subfolder.Info.IsSynced ? Resources.SelectiveSyncView_Status_Downloading : message;
                     subfolder.IsSynced = subfolder.Info.IsSynced;
                 }
             }
@@ -176,6 +182,19 @@ namespace SyncTrayzor.Pages.SelectiveSync
                     subfolder.Status = Localizer.F(Resources.ExplorerIntegration_ActionFailed_Message, e.Message);
                     subfolder.IsSynced = subfolder.Info.IsSynced;
                 }
+            }
+        }
+
+        private async Task<System.Collections.Generic.IReadOnlyList<SubfolderInfo>> TryListSubfoldersAsync()
+        {
+            try
+            {
+                return await selectiveSyncService.ListSubfoldersAsync(Directory, CancellationToken.None);
+            }
+            catch (Exception e)
+            {
+                logger.Info(e, "Failed to list subfolders of {0}", DirectoryName);
+                return [];
             }
         }
 

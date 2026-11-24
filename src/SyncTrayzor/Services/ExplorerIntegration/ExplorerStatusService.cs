@@ -533,6 +533,9 @@ namespace SyncTrayzor.Services.ExplorerIntegration
             }
         }
 
+        /// <summary>A folder's root as Explorer shows it (long names, no trailing separator except for a drive root)</summary>
+        public static string NormalizeRoot(string root) => FolderEntry.NormalizeRoot(root);
+
         private sealed class FolderEntry : IDisposable
         {
             private readonly ExplorerStatusService owner;

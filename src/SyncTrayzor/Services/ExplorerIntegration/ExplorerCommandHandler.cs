@@ -203,7 +203,7 @@ namespace SyncTrayzor.Services.ExplorerIntegration
             var names = Names(folderPaths);
             var confirmed = false;
             await Execute.OnUIThreadAsync(() => confirmed = windowManager.ShowMessageBox(
-                Localizer.F(Resources.SelectiveSync_ConfirmRemove_Message, names),
+                selectiveSyncService.ConfirmRemoveMessage(names),
                 Resources.SelectiveSync_ConfirmRemove_Title,
                 MessageBoxButton.OKCancel,
                 MessageBoxImage.Question,

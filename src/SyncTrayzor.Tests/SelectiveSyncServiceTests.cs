@@ -37,6 +37,7 @@ namespace SyncTrayzor.Tests
             service = new SelectiveSyncService(syncthing.Manager, status, new NullShellNotifier(), recycleBin, journal)
             {
                 ConfirmIgnoredTimeout = TimeSpan.FromSeconds(1),
+                SettleDelay = TimeSpan.Zero,
             };
         }
 
@@ -160,7 +161,7 @@ namespace SyncTrayzor.Tests
         public async Task RefusesIfAnotherSyncthingFolderIsInside()
         {
             CreateFile("2019/a.jpg");
-            status.Roots = [root, Path.Combine(root, "2019", "nested")];
+            syncthing.OtherFolderRoots = [Path.Combine(root, "2019", "nested")];
 
             var result = await RemoveAsync("2019");
 
@@ -290,7 +291,7 @@ namespace SyncTrayzor.Tests
         {
             // That folder isn't affected by this folder's ignore patterns, so it would sync the deletion
             CreateFile("2019/a.jpg");
-            status.Roots = [Path.GetDirectoryName(root), root];
+            syncthing.OtherFolderRoots = [Path.GetDirectoryName(root)];
 
             var result = await RemoveAsync("2019");
 
@@ -427,6 +428,72 @@ namespace SyncTrayzor.Tests
             Assert.Empty(Directory.EnumerateFileSystemEntries(Path.Combine(root, "2019")));
         }
 
+        [Fact]
+        public async Task RefusesIfAnotherSyncthingFolderIsTheDirectory()
+        {
+            CreateFile("2019/a.jpg");
+            syncthing.OtherFolderRoots = [Path.Combine(root, "2019")];
+
+            var result = await RemoveAsync("2019");
+
+            Assert.False(result.Succeeded);
+            AssertNothingChanged([]);
+        }
+
+        [Fact]
+        public async Task RefusesIfTheIgnorePatternsChangeWhileChecking()
+        {
+            CreateFile("2019/a.jpg");
+            syncthing.OnFileCheck = () => syncthing.Lines = ["/Private"];
+
+            var result = await RemoveAsync("2019");
+
+            Assert.False(result.Succeeded);
+            AssertNothingChanged(["/Private"]);
+        }
+
+        [Fact]
+        public async Task RemovesADirectoryWhichIsNotDownloadedYet()
+        {
+            var result = await RemoveAsync("2021");
+
+            Assert.True(result.Succeeded, result.Error);
+            Assert.Equal(["/2021"], syncthing.Lines);
+            Assert.True(Directory.Exists(Path.Combine(root, "2021")));
+        }
+
+        [Fact]
+        public async Task RecoveryOnlyRemovesItsOwnLine()
+        {
+            // The removal's line never made it, and the user's own pattern ignores the directory
+            syncthing.Lines = ["/Archive*"];
+            journal.Add([new PendingRemoval(FolderId, "Archive2019")]);
+
+            await syncthing.RaiseDataLoadedAsync();
+
+            Assert.Equal(["/Archive*"], syncthing.Lines);
+            Assert.Empty(journal.Pending);
+        }
+
+        [Fact]
+        public async Task DownloadOnlyRemovesItsOwnLine()
+        {
+            syncthing.Lines = ["/2019", "node_modules"];
+
+            await service.DownloadToDeviceAsync([Dir("2019")], CancellationToken.None);
+
+            Assert.Equal(["node_modules"], syncthing.Lines);
+        }
+
+        [Fact]
+        public async Task DownloadRefusesWhatTheUsersOwnPatternsIgnore()
+        {
+            syncthing.Lines = ["node_modules"];
+
+            await Assert.ThrowsAsync<SelectiveSyncException>(() => service.DownloadToDeviceAsync([Dir("app/node_modules")], CancellationToken.None));
+            Assert.Equal(["node_modules"], syncthing.Lines);
+        }
+
         private void AssertNothingChanged(List<string> expectedLines)
         {
             Assert.Equal(expectedLines, syncthing.Lines);
@@ -463,6 +530,11 @@ namespace SyncTrayzor.Tests
                 return Task.Delay(500);
             }
             public Action OnConfirm { get; set; }
+            public Action OnFileCheck { get; set; }
+            public List<string> OtherFolderRoots
+            {
+                set => folders.Others = value.Select((x, i) => new Folder("other" + i, "Other", x, true, FolderSyncState.Idle, null)).ToList();
+            }
 
             private readonly SyncthingCapabilities capabilities = new() { SyncthingVersion = new Version(2, 1, 8) };
             private FakeFolders folders;
@@ -515,6 +587,8 @@ namespace SyncTrayzor.Tests
                         return ScanFails ? Task.FromException(new TaskCanceledException("timeout")) : Task.CompletedTask;
                     case "ScanAsync": return Task.CompletedTask;
                     case "FetchFileAsync":
+                        OnFileCheck?.Invoke();
+                        OnFileCheck = null;
                         return Task.FromResult(Files.TryGetValue((string)args[1], out var file) ? file : null);
                     case "IsIgnoredInIndexAsync":
                         OnConfirm?.Invoke();
@@ -529,13 +603,15 @@ namespace SyncTrayzor.Tests
 
         private sealed class FakeFolders(Folder folder) : ISyncthingFolderManager
         {
+            public List<Folder> Others { get; set; } = [];
+
             public bool TryFetchById(string folderId, out Folder result)
             {
                 result = folderId == folder.FolderId ? folder : null;
                 return result != null;
             }
 
-            public IReadOnlyCollection<Folder> FetchAll() => [folder];
+            public IReadOnlyCollection<Folder> FetchAll() => [folder, .. Others];
 
             public event EventHandler FoldersChanged { add { } remove { } }
             public event EventHandler<FolderSyncStateChangedEventArgs> SyncStateChanged { add { } remove { } }

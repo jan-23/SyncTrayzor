@@ -187,25 +187,31 @@ Removing a subfolder only deletes it here, never on other devices, and asks for 
  1. has Syncthing rescan the subfolder, and checks every file in it: Syncthing's index must match the file on disk, this device must have the newest version (no unsynced local changes), and another device that's connected right now must have a valid copy of that version (an untrusted device, which only has an encrypted copy, doesn't count),
  2. adds the subfolder to the folder's ignore patterns (a line like `/Photos/2019` at the top of `.stignore`),
  3. waits until Syncthing confirms that it's ignored, so Syncthing won't notice the deletion and won't sync it to other devices,
- 4. checks again that another device still has each file (in case it removed the same subfolder at the same time), and moves the checked files to the Recycle Bin, if they haven't changed since, leaving an empty placeholder folder with a grey icon.
+ 4. waits a few seconds and checks again that another device still has each file (in case it removed the same subfolder at the same time), and moves the checked files to the Recycle Bin, if they haven't changed since, leaving an empty placeholder folder with a grey icon.
+
+A subfolder which isn't downloaded to this device yet can be removed too: that just stops its download.
 
 If a check fails, nothing is changed. It also refuses if:
  - the subfolder contains files which the ignore patterns already exclude (this device has the only copy of those, except for `(?d)` patterns),
  - it contains another Syncthing folder, or another Syncthing folder contains it (which would sync the deletion to its own devices),
  - it, a folder above it, or anything in it is a link or junction,
  - it contains a file used by an `#include` in the ignore patterns,
- - its drive has no Recycle Bin, or a path in it is too long for the Recycle Bin.
+ - its drive has no Recycle Bin, or a path in it is too long for the Recycle Bin,
+ - `.stignore` was changed by someone else during the checks.
 
 If something goes wrong once `.stignore` is being changed (Syncthing doesn't confirm, a file changes meanwhile, another device no longer has a file, a file can't be moved to the Recycle Bin), `.stignore` is restored: the subfolder is synced as before, and Syncthing downloads anything already moved to the Recycle Bin again.
 If even that fails (e.g. Syncthing stopped meanwhile), SyncTrayzor says so, and restores it the next time Syncthing runs.
 Several subfolders removed together (e.g. in "Choose subfolders…") change `.stignore` only once, so Syncthing only rescans once.
 
-Removing subfolders needs a Syncthing version newer than v2.1.7. Older versions also report a file as present on another device when that device ignores it (and may have deleted it, e.g. by removing the same subfolder), so SyncTrayzor couldn't make sure the files are safe elsewhere. With older versions, "Remove from this device" isn't offered; downloading subfolders still works. If you know that no other device ignores or removes these subfolders, you can allow it anyway in Settings ("Allow removing subfolders with Syncthing v2.1.7 and older"), at your own risk.
+Removing subfolders needs a Syncthing version newer than v2.1.7. Older versions also report a file as present on another device when that device ignores it (and may have deleted it, e.g. by removing the same subfolder), so SyncTrayzor couldn't make sure the files are safe elsewhere. With older versions, "Remove from this device" isn't offered; downloading subfolders still works. If you know that no other device ignores or removes these subfolders, you can allow it anyway in Settings ("Allow removing subfolders with Syncthing v2.1.7 and older (unsafe)"), at your own risk: then a device which ignores the files (for whatever reason) counts as having a copy.
 At the time of writing, no such Syncthing release exists yet (the fix is merged, but not released), and SyncTrayzor ships Syncthing v2.0.3: removing subfolders becomes available once Syncthing is updated to a newer release.
+
+Deleting or renaming files in a subfolder right before removing it isn't recommended: if those changes haven't reached the other devices yet, they never will, and the files come back when the subfolder is downloaded again.
 
 Keep in mind that removing a subfolder relies on your other devices: once it's removed here, deleting it on the device that still has it deletes the last copy. SyncTrayzor can't tell whether another device still has the files on disk, only what it last reported.
 
 To bring a subfolder back, right-click its placeholder and choose "Download to this device", or tick it in "Choose subfolders…". Syncthing then downloads it again.
+SyncTrayzor only adds and removes its own lines in `.stignore` and never touches your own patterns: a subfolder excluded by one of them (e.g. `node_modules`) stays excluded until you change that pattern in Syncthing.
 Deleting a placeholder is harmless: it's ignored, so nothing happens on other devices, and it's still listed in "Choose subfolders…".
 Files you put into a placeholder aren't synced (it's ignored), until you download the subfolder again.
 New subfolders created on other devices are synced to this device as usual: you choose which subfolders not to keep, rather than which ones to keep.

@@ -1047,7 +1047,7 @@ namespace SyncTrayzor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to "{0}" wasn't removed: "{1}" in it is excluded by the folder's ignore patterns, so this device has the only copy of it.
+        ///   Looks up a localized string similar to "{0}" wasn't removed: "{1}" in it is excluded by the folder's ignore patterns, so this device has the only copy of it. If files like it may be deleted, add "(?d)" in front of their ignore pattern.
         /// </summary>
         public static string SelectiveSync_Error_IgnoredInside {
             get {
@@ -1479,7 +1479,34 @@ namespace SyncTrayzor.Properties {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to These versions also count a copy on a device which ignores the files. If another device has removed the same subfolder, SyncTrayzor may delete the last copy..
+        ///   Looks up a localized string similar to Warning: this version of Syncthing also counts a copy on a device which ignores the files. If another device doesn't really have them, they are lost from all devices except for this device's Recycle Bin..
+        /// </summary>
+        public static string SelectiveSync_ConfirmRemove_UnreliableWarning {
+            get {
+                return ResourceManager.GetString("SelectiveSync_ConfirmRemove_UnreliableWarning", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" wasn't removed: the folder's ignore patterns were changed while checking it. Please try again..
+        /// </summary>
+        public static string SelectiveSync_Error_IgnoresChanged {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_IgnoresChanged", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to "{0}" is excluded by the folder's own ignore patterns. To sync it, change them in Syncthing..
+        /// </summary>
+        public static string SelectiveSync_Error_IgnoredByUser {
+            get {
+                return ResourceManager.GetString("SelectiveSync_Error_IgnoredByUser", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to These versions also count a copy on a device which ignores the files, e.g. because it has removed the same subfolder or ignores some file types. SyncTrayzor may then delete the last copy..
         /// </summary>
         public static string SettingsView_ExplorerIntegration_SkipVersionCheck_ToolTip {
             get {

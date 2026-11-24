@@ -9,12 +9,12 @@ namespace SyncTrayzor.Services.ExplorerIntegration
     /// Edits the lines of a folder's .stignore file to (un)ignore individual paths.
     /// </summary>
     /// <remarks>
-    /// Syncthing uses the first pattern that matches, so new lines are inserted at the top (after a possible #escape
-    /// line, which must precede all patterns), where they win over what follows them. The exception is an #include
-    /// placed before the #escape line: its patterns come first. Callers which depend on the result check it.
+    /// SyncTrayzor only ever adds and removes its own lines, one per path ("/path"), and leaves the user's patterns
+    /// alone. Syncthing uses the first pattern that matches, so new lines are inserted at the top (after a possible
+    /// #escape line, which must precede all patterns), where they win over what follows them. The exception is an
+    /// #include placed before the #escape line: its patterns come first. Callers which depend on the result check it.
     ///
-    /// <see cref="Ignore"/> and <see cref="Unignore"/> undo each other: ignoring leaves an existing exception for the
-    /// same path in place (the new line above it wins), so un-ignoring only has to remove that line again.
+    /// <see cref="Ignore"/> and <see cref="RemoveIgnores"/> undo each other.
     /// </remarks>
     public static class IgnorePatternEditor
     {
@@ -42,27 +42,14 @@ namespace SyncTrayzor.Services.ExplorerIntegration
         }
 
         /// <summary>
-        /// Returns new lines, with the given folder-relative paths no longer ignored.
+        /// Returns new lines without the lines which <see cref="Ignore"/> adds for the given paths. Nothing else is
+        /// changed: a path which the user's own patterns ignore stays ignored.
         /// </summary>
-        /// <remarks>
-        /// If a path was ignored through a line naming exactly that path, the line is removed.
-        /// Otherwise it is ignored by a more general pattern, and an exception ("!/path") is added.
-        /// </remarks>
-        public static List<string> Unignore(IReadOnlyList<string> lines, IEnumerable<string> relativePaths)
+        public static List<string> RemoveIgnores(IReadOnlyList<string> lines, IEnumerable<string> relativePaths)
         {
             var escapeChar = FindEscapeChar(lines);
-            var result = lines.ToList();
-            var exceptions = new List<string>();
-
-            foreach (var pattern in relativePaths.Select(x => PatternFor(x, escapeChar)).Distinct(StringComparer.OrdinalIgnoreCase))
-            {
-                int removed = result.RemoveAll(line => IsSamePattern(line, pattern));
-                if (removed == 0 && !result.Any(line => IsSamePattern(line, "!" + pattern)))
-                    exceptions.Add("!" + pattern);
-            }
-
-            result.InsertRange(InsertPosition(result), exceptions);
-            return result;
+            var patterns = relativePaths.Select(x => PatternFor(x, escapeChar)).ToList();
+            return lines.Where(line => !patterns.Any(p => IsSamePattern(line, p))).ToList();
         }
 
         /// <summary>
